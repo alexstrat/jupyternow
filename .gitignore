@@ -63,3 +63,4 @@ target/
 # envdir folder
 envdir
 
+node_modules/
