@@ -64,3 +64,4 @@ target/
 envdir
 
 node_modules/
+public/css/*.css
