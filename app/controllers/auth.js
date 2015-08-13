@@ -12,7 +12,7 @@ var express = require('express'),
 //   redirecting the user to google.com.  After authorization, Google
 //   will redirect the user back to this application at /auth/google/callback
 router.get('/auth/google',
-  passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }),
+  passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/userinfo.email'] }),
   function(req, res){
     // The request will be redirected to Google for authentication, so this
     // function will not be called.
