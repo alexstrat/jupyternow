@@ -7,7 +7,6 @@ module.exports = function (app) {
 };
 
 router.get('/', function (req, res, next) {
-  console.log(req.user)
   var articles = [new Article(), new Article()];
     res.render('index', {
       title: 'Generator-Express MVC',
