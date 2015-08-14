@@ -3,7 +3,8 @@ var express = require('express'),
   passport = require('passport'),
   GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
   session = require('express-session')
-  config = require('../../config/config');
+  config = require('../../config/config'),
+  User = require('../../models').User;
 
 
 // GET /auth/google
@@ -38,11 +39,13 @@ router.get('/complete/google-oauth2/',
 //   have a database of user records, the complete Google profile is
 //   serialized and deserialized.
 passport.serializeUser(function(user, done) {
-  done(null, user);
+  done(null, user.id);
 });
 
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+passport.deserializeUser(function(user_id, done) {
+  User.findById(user_id).then(function(user) {
+    done(null, user);
+  });
 });
 
 
@@ -52,15 +55,7 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://test1.com:3000/complete/google-oauth2"
   },
   function(accessToken, refreshToken, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-
-      // To keep the example simple, the user's Google profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the Google account with a user record in your database,
-      // and return that user instead.
-      return done(null, profile);
-    });
+    User.findOrCreateFromProfile(profile, done);
   }
 ));
 
