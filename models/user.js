@@ -23,7 +23,10 @@ module.exports = function(sequelize, DataTypes) {
 
         // check if we are not on a provider I can't handle
         if (profile.provider != 'google') {
-          return done(new Error("findOrCreateFromProfile: can't handle profiles that are not from google"))
+          err = new Error("findOrCreateFromProfile: can't handle profiles that\
+are not from google")
+
+          return done(err, null);
         }
 
         // construct user from profile
