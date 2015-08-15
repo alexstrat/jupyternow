@@ -7,41 +7,53 @@ var EXPOSED_PORT = '8888';
 
 
 function DockerSpawner(reference) {
-  this.docker = Docker(config.docker);
+
+  //instantiate a docker client
+  var docker = Docker(config.docker);
+
+  // wrap all methods of the client to return promises
+  this.docker = Promise.promisifyAll(docker);
 }
 
-DockerSpawner.prototype.start = function(server_data, done) {
+DockerSpawner.prototype.start = function(server_data) {
   var self = this;
   var docker = self.docker;
 
   container_config = {
     Image: IMAGE_NAME,
-    HostConfig: {PublishAllPorts: true}
+    HostConfig: {
+      PublishAllPorts: true
+    }
   }
 
-  docker.createContainer(container_config, function (err, container) {
-    if (err) {
-      return done(err)
-    }
+  return docker
+    .createContainerAsync(container_config)
+    .then(function(container) {
+      // promisifyAllfy the container
+      container = Promise.promisifyAll(container);
 
+      // store the reeference now
+      self.reference = {'container_id': container.id};
 
-    self.reference = {'container_id': container.id};
+      // start the container
+      return container.startAsync()
 
-    container.inspect(function(err, data) {
-      self.port = data.NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
+    }).then(function() {
+      // inspect the container after start to have info on port
+      return self.getContainer().inspectAsync();
+
+    }).then(function(inspect_data){
+
+      // let's extract the port from inspect data
+      var NetworkSettings = inspect_data.NetworkSettings;
+      self.port = NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
+
+      return self.reference
     })
-
-    container.start(function (err, data) {
-      if (err) {
-        return done(err);
-      }
-      done()
-    });
-  });
 }
 
-DockerSpawner.prototype.stop = function(cb) {
-  this.getContainer().stop(cb)
+DockerSpawner.prototype.stop = function() {
+  return this.getContainer().stopAsync()
 }
 
 
@@ -49,7 +61,9 @@ DockerSpawner.prototype.getContainer = function() {
   var docker = this.docker;
   var containerId = this.reference.container_id;
 
-  return docker.getContainer(containerId);
+  var container = docker.getContainer(containerId);
+
+  return Promise.promisifyAll(container);
 }
 
 DockerSpawner.prototype.getStatus = function() {
