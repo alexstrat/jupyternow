@@ -9,7 +9,7 @@ var EXPOSED_PORT = '8888';
 function DockerSpawner(reference) {
 
   //instantiate a docker client
-  var docker = Docker(config.docker);
+  var docker = Docker(config.docker.host_config);
 
   // wrap all methods of the client to return promises
   this.docker = Promise.promisifyAll(docker);
@@ -79,7 +79,8 @@ DockerSpawner.prototype.getReference = function() {
 }
 
 DockerSpawner.prototype.getServerAddress = function() {
-
+  var ip = config.docker.plublic_ip;
+  return 'http://'+ip+':'+this.port
 }
 
 module.exports = DockerSpawner;
