@@ -48,7 +48,10 @@ DockerSpawner.prototype.start = function(server_data) {
       var NetworkSettings = inspect_data.NetworkSettings;
       self.port = NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
 
-      return self.reference
+      return {
+        reference: self.getReference(),
+        server_address: self.getServerAddress()
+      }
     })
 }
 
