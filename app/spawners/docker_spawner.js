@@ -13,6 +13,8 @@ function DockerSpawner(reference) {
 
   // wrap all methods of the client to return promises
   this.docker = Promise.promisifyAll(docker);
+
+  this.reference = reference
 }
 
 DockerSpawner.prototype.start = function(server_data) {
