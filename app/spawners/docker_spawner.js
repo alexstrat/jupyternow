@@ -53,7 +53,11 @@ DockerSpawner.prototype.start = function(server_data) {
 }
 
 DockerSpawner.prototype.stop = function() {
-  return this.getContainer().stopAsync()
+  var container = this.getContainer();
+  return container.stopAsync()
+          .then(function (){
+            return container.removeAsync()
+          })
 }
 
 
