@@ -75,7 +75,7 @@ DockerSpawner.prototype.getStatus = function() {
 }
 
 DockerSpawner.prototype.getReference = function() {
-
+  return this.reference;
 }
 
 DockerSpawner.prototype.getServerAddress = function() {
