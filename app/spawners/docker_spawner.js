@@ -82,7 +82,7 @@ DockerSpawner.prototype.getReference = function() {
 }
 
 DockerSpawner.prototype.getServerAddress = function() {
-  var ip = config.docker.plublic_ip;
+  var ip = config.docker.host_ip;
   return 'http://'+ip+':'+this.port
 }
 

@@ -18,8 +18,10 @@ var config = {
       oauth2_secret: process.env.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET,
     },
     docker: {
-      host_config: null, // will use ENV variable,
-      plublic_ip: url.parse(process.env['DOCKER_HOST']).hostname
+      // null will use ENV variables
+      host_config: null, 
+      // the IP accessible to the proxy server
+      host_ip: url.parse(process.env['DOCKER_HOST']).hostname
     }
   },
 
