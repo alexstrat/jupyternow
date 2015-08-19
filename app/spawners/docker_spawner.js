@@ -21,8 +21,11 @@ DockerSpawner.prototype.start = function(server_data) {
   var self = this;
   var docker = self.docker;
 
+  var base_url = server_data.base_url;
   container_config = {
     Image: IMAGE_NAME,
+    Cmd: ['ipython', 'notebook',
+          '--NotebookApp.base_url='+base_url, '--no-browser'],
     HostConfig: {
       PublishAllPorts: true
     }

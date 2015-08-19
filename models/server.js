@@ -29,6 +29,11 @@ module.exports = function(sequelize, DataTypes) {
 
   }, {
     classMethods: {
+      findBySlug: function(slug) {
+        return this.findOne({
+          where : {slug: slug}
+        })
+      },
       associate: function(models) {
         // associations can be defined here
       }
@@ -40,8 +45,12 @@ module.exports = function(sequelize, DataTypes) {
 
         var s = self._getSpawner();
 
+        var server_data = {
+          base_url: '/s/'+self.slug
+        }
+
         return s
-          .start()
+          .start(server_data)
           .then(function(start_info) {
             self.spawner_reference = start_info.reference;
             self.internal_addres = start_info.server_address;
