@@ -1,5 +1,6 @@
 var express = require('express');
 var glob = require('glob');
+var http = require('http');
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -12,16 +13,17 @@ module.exports = function(app, config) {
   var env = process.env.NODE_ENV || 'development';
   app.locals.ENV = env;
   app.locals.ENV_DEVELOPMENT = env == 'development';
-  
+
   app.set('views', config.root + '/app/views');
   app.set('view engine', 'jade');
 
   // app.use(favicon(config.root + '/public/img/favicon.ico'));
   app.use(logger('dev'));
-  app.use(bodyParser.json());
+  // cant use body parser otherwise the proxy can't work
+  //app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({
-    extended: true
-  }));
+     extended: true
+   }));
   app.use(cookieParser());
   app.use(compress());
   app.use(express.static(config.root + '/public'));
@@ -37,7 +39,7 @@ module.exports = function(app, config) {
     err.status = 404;
     next(err);
   });
-  
+
   if(app.get('env') === 'development'){
     app.use(function (err, req, res, next) {
       res.status(err.status || 500);
@@ -57,5 +59,25 @@ module.exports = function(app, config) {
         title: 'error'
       });
   });
+
+
+  // let's override listen to make sure we listen to 'upgrade' events
+  app.listen = function listen() {
+    var server = http.createServer(this);
+
+    server.on('upgrade', function(req, socket, upgradeHead) {
+      // avoid hanging onto upgradeHead as this will keep the entire
+      // slab buffer used by node alive
+      var head = new Buffer(upgradeHead.length);
+      upgradeHead.copy(head);
+
+      res = new http.ServerResponse(req);
+      req.upgradeSocket = socket;
+
+      app(req, res)
+    });
+
+    return server.listen.apply(server, arguments);
+  };
 
 };
