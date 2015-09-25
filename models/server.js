@@ -35,7 +35,12 @@ module.exports = function(sequelize, DataTypes) {
         })
       },
       associate: function(models) {
-        // associations can be defined here
+
+        var User = models.User,
+            Server = models.Server;
+        User.belongsToMany(Server, {through: 'ServerUser'});
+        Server.belongsToMany(User, {through: 'ServerUser'});
+
       }
     },
     instanceMethods: {

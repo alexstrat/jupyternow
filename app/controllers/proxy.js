@@ -46,6 +46,17 @@ router.all('/s/:server_slug*', function (req, res, next) {
             return res.send(404);
         }
 
-        doProxyRequest(req, res, server);
-  })
+        if(!req.user) {
+             return res.send(401);
+        }
+
+        server.hasUser(req.user).then(function(has_user) {
+            if(has_user) {
+                doProxyRequest(req, res, server)
+            } else {
+                return res.send(403);
+            }
+
+        });
+    });
 });
