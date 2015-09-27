@@ -2,7 +2,7 @@ var Docker = require('dockerode'),
     Promise = require('bluebird').Promise,
     config = require('../../config/config.js');
 
-var IMAGE_NAME = 'jupyter/minimal';
+var IMAGE_NAME = 'jupyter/minimal-notebook';
 var EXPOSED_PORT = '8888';
 
 
@@ -24,8 +24,8 @@ DockerSpawner.prototype.start = function(server_data) {
   var base_url = server_data.base_url;
   container_config = {
     Image: IMAGE_NAME,
-    Cmd: ['ipython', 'notebook',
-          '--NotebookApp.base_url='+base_url, '--no-browser'],
+    Cmd: ['start-notebook.sh',
+          '--NotebookApp.base_url='+base_url],
     HostConfig: {
       PublishAllPorts: true
     }
