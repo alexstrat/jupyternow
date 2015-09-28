@@ -19,9 +19,14 @@ var config = {
     },
     docker: {
       // null will use ENV variables
-      host_config: null, 
+      host_config: null,
       // the IP accessible to the proxy server
       host_ip: url.parse(process.env['DOCKER_HOST']).hostname
+    },
+    Auth0: {
+      domain: 'notebookhub.auth0.com',
+      clientID: process.env.AUTH0_CLIENT_ID,
+      clientSecret: process.env.AUTH0_CLIENT_SECRET,
     }
   },
 

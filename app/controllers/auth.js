@@ -1,50 +1,46 @@
-var express = require('express'),
-  router = express.Router(),
-  passport = require('passport'),
-  GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
-  session = require('express-session')
-  config = require('../../config/config'),
-  User = require('../../models').User;
+var passport = require('passport'),
+    Auth0Strategy = require('passport-auth0'),
+    config = require('../../config/config'),
+    express = require('express'),
+    session = require('express-session');
 
-
-router.get('/auth/google',
-  passport.authenticate('google',{
-    scope: ['https://www.googleapis.com/auth/userinfo.email']
-  })
-);
-
-router.get('/complete/google-oauth2/',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
+var strategy = new Auth0Strategy({
+    domain:       config.Auth0.domain,
+    clientID:     config.Auth0.clientID,
+    clientSecret: config.Auth0.clientSecret,
+    callbackURL:  '/callback'
+  }, function(accessToken, refreshToken, extraParams, profile, done) {
+    // accessToken is the token to call Auth0 API (not needed in the most cases)
+    // extraParams.id_token has the JSON Web Token
+    // profile has all the information from the user
+    return done(null, profile);
   });
 
+passport.use(strategy);
+
+// This is not a best practice, but we want to keep things simple for now
 passport.serializeUser(function(user, done) {
-  done(null, user.id);
+  done(null, user);
 });
 
-passport.deserializeUser(function(user_id, done) {
-  User.findById(user_id).then(function(user) {
-    done(null, user);
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+router = express.Router();
+
+// Auth0 callback handler
+router.get('/callback',
+  passport.authenticate('auth0', { failureRedirect: '/url-if-something-fails' }),
+  function(req, res) {
+    if (!req.user) {
+      throw new Error('user null');
+    }
+    res.redirect("/");
   });
-});
 
-
-passport.use(new GoogleStrategy({
-    clientID: config.google.oauth2_key,
-    clientSecret: config.google.oauth2_secret,
-    callbackURL: "http://test1.com:3000/complete/google-oauth2"
-  },
-  function(accessToken, refreshToken, profile, done) {
-    User.findOrCreateFromProfile(profile, done);
-  }
-));
-
-
-
-
-module.exports = function (app) {
-  // FIX ME: please add a real secret
+module.exports = function(app) {
+  //FIX ME: please add a real secret
   app.use(session({secret: 'foo'}));
 
   app.use(passport.initialize());
@@ -52,4 +48,7 @@ module.exports = function (app) {
 
   app.use('/', router);
 
-};
+  app.locals.Auth0 = {
+    clientID: config.Auth0.clientID
+  }
+}

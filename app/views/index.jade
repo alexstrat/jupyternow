@@ -1,11 +1,25 @@
 extends layout
 
+block append js
+  script(src="https://cdn.auth0.com/js/lock-7.9.min.js")
+  script(type="text/javascript").
+    var lock = new Auth0Lock("#{Auth0.clientID}", 'notebookhub.auth0.com');
+    function signin() {
+      lock.show({
+          callbackURL: 'http://test1.com:3000/callback'
+        , responseType: 'code'
+        , authParams: {
+          scope: 'openid profile'
+          }
+        })
+    ;}
+
 block content
   h1= title
   p Welcome to #{title}
   if user
-    p you are authenticated as #{user.first_name}
+    p you are authenticated as #{user.displayName}
   else
     p
     | You are unknown please 
-    a(href='auth/google') login
+    button(onclick="window.signin()") login
