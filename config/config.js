@@ -27,6 +27,9 @@ var config = {
       domain: 'notebookhub.auth0.com',
       clientID: process.env.AUTH0_CLIENT_ID,
       clientSecret: process.env.AUTH0_CLIENT_SECRET,
+    },
+    mongodb: {
+      url: process.env.MONGODB_URL
     }
   },
 
