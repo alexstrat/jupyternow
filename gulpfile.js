@@ -21,6 +21,7 @@ gulp.task('develop', function () {
   nodemon({
     script: 'app.js',
     ext: 'js coffee jade',
+    nodeArgs: ['--debug'],
     stdout: false
   }).on('readable', function () {
     this.stdout.on('data', function (chunk) {
