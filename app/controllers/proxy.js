@@ -1,6 +1,6 @@
 var express = require('express'),
    router = express.Router(),
-   db = require('../../models'),
+   Server = require('../models/server'),
    httpProxy = require('http-proxy'),
    url = require('url');
 
@@ -39,7 +39,7 @@ var doProxyRequest = function(req, res, server) {
 
 router.all('/s/:server_slug*', function (req, res, next) {
   var slug = req.params.server_slug;
-  db.Server
+  Server
     .findBySlug(slug)
     .then(function(server) {
         if(!server) {
@@ -50,7 +50,7 @@ router.all('/s/:server_slug*', function (req, res, next) {
              return res.send(401);
         }
 
-        server.hasUser(req.user).then(function(has_user) {
+        server.hasUser(req.user.id).then(function(has_user) {
             if(has_user) {
                 doProxyRequest(req, res, server)
             } else {

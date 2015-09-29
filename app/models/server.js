@@ -2,6 +2,7 @@ var mongoose = require('mongoose'),
     validate = require('mongoose-validator'),
     validator = validate.validatorjs,
     extend = require('extend'),
+    Promise = require('bluebird'),
     Spawner = require('../spawners').DEFAULT_SPAWNER;
 
 
@@ -10,6 +11,10 @@ var SLUG_RE = /^[-a-zA-Z0-9_]+$/
 var isURLOrNullValidator = validate({validator: function(value) {
   return validator.isNull(value) || validator.isURL(value);
 }})
+
+var ServerUserSchema = mongoose.Schema({
+  auth0_user_id: String
+})
 
 var ServerSchema = mongoose.Schema({
 
@@ -29,12 +34,28 @@ var ServerSchema = mongoose.Schema({
   internal_addres: {
     type: String,
     validate: isURLOrNullValidator,
-  }
+  },
+
+  users: [ServerUserSchema]
 
 })
 
 // add some instance methods
 extend(ServerSchema.methods, {
+
+  hasUser: function(user_id) {
+    // get list of authorizized auth0 user_ids
+    var auth0_user_ids = this.users.map(function(user) {
+      return user.auth0_user_id
+    });
+
+    // test user_id agains the list of authorized auth0 user_ids
+    var has_user = auth0_user_ids.indexOf(user_id) != -1;
+
+    // returns a Promise
+    return Promise.resolve(has_user);
+  },
+
   start: function() {
     var self = this;
 
