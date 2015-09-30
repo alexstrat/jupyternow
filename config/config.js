@@ -13,10 +13,6 @@ var config = {
       name: 'jupyterlab'
     },
     port: 3000,
-    google: {
-      oauth2_key: process.env.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
-      oauth2_secret: process.env.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET,
-    },
     docker: {
       // null will use ENV variables
       host_config: null,
