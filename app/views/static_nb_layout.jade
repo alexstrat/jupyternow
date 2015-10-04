@@ -1,0 +1,172 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= title
+    block css
+      link(rel='stylesheet', href='//cdn.jupyter.org/notebook/try-4.0.5/style/style.min.css')
+      link(rel='stylesheet', href='/css/bootstrap_semantic_compatibility.css')
+      link(rel='stylesheet', href='/components/semantic/dist/semantic.css')
+    block js
+        script(src='/components/jquery/dist/jquery.js')
+        script(src='/components/semantic/dist/semantic.js')
+      if ENV_DEVELOPMENT
+        script(src='http://localhost:35729/livereload.js')
+
+  body
+    block content
+    #header(style='display: block;')
+      #header-container.container
+        #ipython_notebook.nav.navbar-brand.pull-left
+          a(href='', title='dashboard')
+            img(src='//cdn.jupyter.org/notebook/try-4.0.5/base/images/logo.png', alt='Jupyter Notebook')
+        span#save_widget.pull-left.save_widget
+          span#notebook_name.filename Super Anlalysis
+          span.checkpoint_status(title='Thu, Oct 1, 2015 9:39 PM') Last Checkpoint: 8 minutes ago
+          span.autosave_status (autosaved)
+      .header-bar
+      #menubar-container.container
+        #menubar
+          #menus.navbar.navbar-default(role='navigation')
+            .container-fluid
+              button.btn.btn-default.navbar-btn.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+                i.fa.fa-bars
+                span.navbar-text Menu
+              p#kernel_indicator.navbar-text.indicator_area
+                span.kernel_indicator_name Python 3
+                i#kernel_indicator_icon.kernel_idle_icon(title='Kernel Idle')
+              i#readonly-indicator.navbar-text(title='This notebook is read-only', style='display: none;')
+                span.fa-stack
+                  i.fa.fa-save.fa-stack-1x
+                  i.fa.fa-ban.fa-stack-2x.text-danger
+              i#modal_indicator.navbar-text.modal_indicator(title='Command Mode')
+              span#notification_area
+                #notification_kernel.notification_widget.btn.btn-xs.navbar-btn.undefined.info(style='display: none;')
+                  span
+                #notification_notebook.notification_widget.btn.btn-xs.navbar-btn(style='display: none;')
+                  span
+              .navbar-collapse.collapse
+                ul.nav.navbar-nav
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown') File
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown') Edit
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown') View
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown') Insert
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown') Cell
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown') Kernel
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown') Help
+        #maintoolbar.navbar
+          .toolbar-inner.navbar-inner.navbar-nobg
+            #maintoolbar-container.container.toolbar
+              #save-notbook.btn-group
+                button.btn.btn-default(title='Save and Checkpoint', data-jupyter-action='ipython.save-notebook')
+                  i.fa-save.fa
+              #insert_above_below.btn-group
+                button.btn.btn-default(title='insert cell below', data-jupyter-action='ipython.insert-cell-after')
+                  i.fa-plus.fa
+              #cut_copy_paste.btn-group
+                button.btn.btn-default(title='cut selected cell', data-jupyter-action='ipython.cut-selected-cell')
+                  i.fa-cut.fa
+                button.btn.btn-default(title='copy selected cell', data-jupyter-action='ipython.copy-selected-cell')
+                  i.fa-copy.fa
+                button.btn.btn-default(title='paste cell below', data-jupyter-action='ipython.paste-cell-after')
+                  i.fa-paste.fa
+              #move_up_down.btn-group
+                button.btn.btn-default(title='move selected cell up', data-jupyter-action='ipython.move-selected-cell-up')
+                  i.fa-arrow-up.fa
+                button.btn.btn-default(title='move selected cell down', data-jupyter-action='ipython.move-selected-cell-down')
+                  i.fa-arrow-down.fa
+              #run_int.btn-group
+                button.btn.btn-default(title='run cell, select below', data-jupyter-action='ipython.run-select-next')
+                  i.fa-step-forward.fa
+                button.btn.btn-default(title='interrupt kernel', data-jupyter-action='ipython.interrupt-kernel')
+                  i.fa-stop.fa
+                button.btn.btn-default(title='restart kernel', data-jupyter-action='ipython.restart-kernel')
+                  i.fa-repeat.fa
+              select#cell_type.form-control.select-xs
+                option(value='code') Code
+                option(value='markdown') Markdown
+                option(value='raw') Raw NBConvert
+                option(value='heading') Heading
+              .btn-group
+                span.navbar-text Cell Toolbar:
+                select#ctb_select.form-control.select-xs
+                  option(value='') None
+                  option(value='Edit Metadata') Edit Metadata
+                  option(value='Raw Cell Format') Raw Cell Format
+                  option(value='Slideshow') Slideshow
+      .lower-header-bar
+    #site(style='height: 662px; display: block;')
+      #ipython-main-app
+        #notebook_panel
+          #notebook(tabindex='-1')
+            #notebook-container.container
+              .cell.code_cell.rendered.unselected(tabindex='2')
+                .input
+                  .prompt.input_prompt In [1]:
+                  .inner_cell
+                    .ctb_hideshow
+                      .celltoolbar
+                    .input_area
+                      .CodeMirror.cm-s-ipython
+                        .CodeMirror-scroll(tabindex='-1')
+                          .CodeMirror-sizer(style='margin-left: 0px; min-width: 162.562px; margin-bottom: 0px; border-right-width: 30px; min-height: 28px; padding-right: 0px; padding-bottom: 0px;')
+                            div(style='position: relative; top: 0px;')
+                              .CodeMirror-lines
+                                div(style='position: relative; outline: none;')
+                                  .CodeMirror-measure
+                                  .CodeMirror-measure
+                                  div(style='position: relative; z-index: 1;')
+                                  .CodeMirror-cursors(style='')
+                                    .CodeMirror-cursor(style='left: 159.562px; top: 0px; height: 17px;')  
+                                  .CodeMirror-code
+                                    pre.CodeMirror-line.
+                                      import matplotlib
+                .output_wrapper
+                  .output(style='')
+                    .output_area
+                      .prompt
+                      .output_subarea.output_text.output_error
+                        pre.
+                          log - 1 - row 18
+                          log - 1 - row 18
+                          log - 1 - row 18
+                          log - 1 - row 18
+              .cell.code_cell.rendered.unselected(tabindex='2')
+                .input
+                  .prompt.input_prompt In [3]:
+                  .inner_cell
+                    .ctb_hideshow
+                      .celltoolbar
+                    .input_area
+                      .CodeMirror.cm-s-ipython
+                        .CodeMirror-scroll(tabindex='-1')
+                          .CodeMirror-sizer(style='margin-left: 0px; min-width: 507.031px; margin-bottom: 0px; border-right-width: 30px; min-height: 28px; padding-right: 0px; padding-bottom: 0px;')
+                            div(style='position: relative; top: 0px;')
+                              .CodeMirror-lines
+                                div(style='position: relative; outline: none;')
+                                  .CodeMirror-measure
+                                    pre.
+                                  .CodeMirror-measure
+                                  div(style='position: relative; z-index: 1;')
+                                  .CodeMirror-code
+                                    pre.CodeMirror-line.
+                                     df.plot()
+                          div(style='position: absolute; height: 30px; width: 1px; top: 28px;')
+                          .CodeMirror-gutters(style='display: none; height: 58px;')
+                .output_wrapper
+                  .out_prompt_overlay.prompt(title='click to scroll output; double click to hide', style='')
+                  .output(style='')
+                    .output_area
+                      .prompt.output_prompt Out[3]:
+                      .output_subarea.output_html.rendered_html.output_result
+                        img(src='http://matplotlib.org/_images/subplot_demo3.png')
+                  .btn.btn-default.output_collapsed(title='click to expand output', style='display: none;') . . .
+            .end_space
