@@ -36,7 +36,8 @@ router.get('/callback',
     if (!req.user) {
       throw new Error('user null');
     }
-    res.redirect("/");
+    var redirect_to = req.query.redirect_to || "/";
+    res.redirect(redirect_to);
   });
 
 module.exports = function(app) {
