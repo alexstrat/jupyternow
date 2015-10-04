@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var compress = require('compression');
 var methodOverride = require('method-override');
 var expstate = require('express-state');
+var browserify = require('browserify-middleware');
 
 module.exports = function(app, config) {
   var env = process.env.NODE_ENV || 'development';
@@ -31,6 +32,8 @@ module.exports = function(app, config) {
   app.use(methodOverride());
 
   expstate.extend(app);
+
+  app.use('/js', browserify(config.root + '/app/client/'));
 
   var controllers = glob.sync(config.root + '/app/controllers/*.js');
   controllers.forEach(function (controller) {

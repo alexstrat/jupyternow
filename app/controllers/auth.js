@@ -27,7 +27,7 @@ passport.deserializeUser(function(user, done) {
   done(null, user);
 });
 
-router = express.Router();
+var router = express.Router();
 
 // Auth0 callback handler
 router.get('/callback',
@@ -36,7 +36,7 @@ router.get('/callback',
     if (!req.user) {
       throw new Error('user null');
     }
-    var redirect_to = req.query.redirect_to || "/";
+    var redirect_to = req.query.redirect_to || '/';
     res.redirect(redirect_to);
   });
 
@@ -51,6 +51,6 @@ module.exports = function(app) {
 
   app.locals.Auth0 = {
     clientID: config.Auth0.clientID
-  }
-  app.expose(config.Auth0.clientID, "Auth0.clientID");
-}
+  };
+  app.expose(config.Auth0.clientID, 'Auth0.clientID');
+};
