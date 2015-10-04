@@ -52,4 +52,5 @@ module.exports = function(app) {
   app.locals.Auth0 = {
     clientID: config.Auth0.clientID
   }
+  app.expose(config.Auth0.clientID, "Auth0.clientID");
 }

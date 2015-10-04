@@ -9,6 +9,8 @@ html
       link(rel='stylesheet', href='/css/bootstrap_semantic_compatibility.css')
       link(rel='stylesheet', href='/components/semantic/dist/semantic.css')
     block js
+        script(type="text/javascript").
+          !{state}
         script(src='/components/jquery/dist/jquery.js')
         script(src='/components/semantic/dist/semantic.js')
       if ENV_DEVELOPMENT

@@ -14,6 +14,7 @@
     "envdir": "^0.1.0",
     "express": "^4.13.3",
     "express-session": "^1.11.3",
+    "express-state": "^1.3.0",
     "extend": "^3.0.0",
     "glob": "^5.0.3",
     "http-proxy": "^1.11.1",
