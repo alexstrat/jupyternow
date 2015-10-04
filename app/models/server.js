@@ -6,15 +6,15 @@ var mongoose = require('mongoose'),
     Spawner = require('../spawners').DEFAULT_SPAWNER;
 
 
-var SLUG_RE = /^[-a-zA-Z0-9_]+$/
+var SLUG_RE = /^[-a-zA-Z0-9_]+$/;
 
 var isURLOrNullValidator = validate({validator: function(value) {
   return validator.isNull(value) || validator.isURL(value);
-}})
+}});
 
 var ServerUserSchema = mongoose.Schema({
   auth0_user_id: String
-})
+});
 
 var ServerSchema = mongoose.Schema({
 
@@ -38,7 +38,7 @@ var ServerSchema = mongoose.Schema({
 
   users: [ServerUserSchema]
 
-})
+});
 
 // add some instance methods
 extend(ServerSchema.methods, {
@@ -46,7 +46,7 @@ extend(ServerSchema.methods, {
   hasUser: function(user_id) {
     // get list of authorizized auth0 user_ids
     var auth0_user_ids = this.users.map(function(user) {
-      return user.auth0_user_id
+      return user.auth0_user_id;
     });
 
     // test user_id agains the list of authorized auth0 user_ids
@@ -63,7 +63,7 @@ extend(ServerSchema.methods, {
 
     var server_data = {
       base_url: '/s/'+self.slug
-    }
+    };
 
     return s
       .start(server_data)
@@ -71,8 +71,8 @@ extend(ServerSchema.methods, {
         self.spawner_reference = start_info.reference;
         self.internal_addres = start_info.server_address;
 
-        return self.save()
-      })
+        return self.save();
+      });
   },
 
   stop: function (){
@@ -85,7 +85,7 @@ extend(ServerSchema.methods, {
         self.spawner_reference = null;
         self.internal_addres = null;
 
-      return self.save()
+      return self.save();
     });
   },
 
