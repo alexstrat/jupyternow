@@ -65,3 +65,5 @@ envdir
 
 node_modules/
 public/css/*.css
+
+public/components
