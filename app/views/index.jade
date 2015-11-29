@@ -6,12 +6,8 @@ block append js
     var lock = new Auth0Lock("#{Auth0.clientID}", 'notebookhub.auth0.com');
     function signin() {
       lock.show({
-          callbackURL: 'http://test1.com:3000/callback'
-        , responseType: 'code'
-        , authParams: {
-          scope: 'openid profile'
-          }
-        })
+          callbackURL: 'http://test1.com:3000/callback?redirect_to=/dispatch'
+        });
     ;}
 
 block content
