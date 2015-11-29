@@ -14,7 +14,7 @@ var isURLOrNullValidator = validate({validator: function(value) {
 }});
 
 var ServerUserSchema = mongoose.Schema({
-  auth0_user_id: String
+  auth0_user_id: {type: String, unique: true}
 });
 
 var ServerSchema = mongoose.Schema({
