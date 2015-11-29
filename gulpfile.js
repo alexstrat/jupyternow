@@ -2,7 +2,8 @@ var gulp = require('gulp'),
   nodemon = require('gulp-nodemon'),
   plumber = require('gulp-plumber'),
   livereload = require('gulp-livereload'),
-  less = require('gulp-less');
+  less = require('gulp-less'),
+  start = require('gulp-start-process');
 
 gulp.task('less', function () {
   gulp.src('./public/css/*.less')
@@ -32,6 +33,10 @@ gulp.task('develop', function () {
     this.stdout.pipe(process.stdout);
     this.stderr.pipe(process.stderr);
   });
+});
+
+gulp.task('repl', function (cb) {
+  return start('nesh -e app_repl_init.js', cb);
 });
 
 gulp.task('default', [
