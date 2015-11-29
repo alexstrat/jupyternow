@@ -28,6 +28,9 @@ DockerSpawner.prototype.start = function(server_data) {
           '--NotebookApp.base_url='+base_url],
     HostConfig: {
       PublishAllPorts: true
+    },
+    Labels: {
+      app: config.docker.app_label
     }
   }
 

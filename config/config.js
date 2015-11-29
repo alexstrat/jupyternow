@@ -17,7 +17,10 @@ var config = {
       // null will use ENV variables
       host_config: null,
       // the IP accessible to the proxy server
-      host_ip: url.parse(process.env['DOCKER_HOST']).hostname
+      host_ip: url.parse(process.env['DOCKER_HOST']).hostname,
+
+      // will set the `app` label
+      app_label: 'jupyterlab_dev'
     },
     Auth0: {
       domain: 'notebookhub.auth0.com',
