@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
     validator = validate.validatorjs,
     extend = require('extend'),
     Promise = require('bluebird'),
+    uuid = require('node-uuid'),
     Spawner = require('../spawners').DEFAULT_SPAWNER;
 
 
@@ -101,7 +102,31 @@ extend(ServerSchema.methods, {
 // add some class methods
 extend(ServerSchema.statics, {
   findBySlug: function(slug) {
-    return this.findOne({'slug': slug}).exec()
+    return this.findOne({'slug': slug}).exec();
+  },
+
+  findByUserId: function(user_id) {
+    return this.find({'users.auth0_user_id': user_id}).exec();
+  },
+
+  createAndStart: function(server_name, user_id) {
+    var server = new this({
+      name: server_name,
+      slug: uuid.v4(),
+    });
+
+    server.users.push({auth0_user_id: user_id});
+
+    return server
+      .save()
+      .then(function(){
+        return server.start();
+      });
+  },
+
+  createAndStartDefaultServerForUser: function(user) {
+    var server_name = user.name.givenName + '\'s default server';
+    return this.createAndStart(server_name, user.id);
   }
 });
 
