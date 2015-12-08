@@ -3,7 +3,8 @@ var gulp = require('gulp'),
   plumber = require('gulp-plumber'),
   livereload = require('gulp-livereload'),
   less = require('gulp-less'),
-  start = require('gulp-start-process');
+  start = require('gulp-start-process'),
+  mocha = require('gulp-mocha');
 
 gulp.task('less', function () {
   gulp.src('./public/css/*.less')
@@ -37,6 +38,27 @@ gulp.task('develop', function () {
 
 gulp.task('repl', function (cb) {
   return start('nesh -e app_repl_init.js', cb);
+});
+
+
+
+var TEST_FILES_GLOB = './test/**/*.js';
+gulp.task('test', function(){
+  process.env.NODE_ENV='test';
+  return gulp.src(TEST_FILES_GLOB, {read: false})
+        .pipe(mocha({reporter: 'dot'}));
+});
+
+gulp.task('test-watch', function() {
+    gulp.watch(['./test/**/*.js', './app/**/*.js'], ['test-notify-only']);
+});
+// stand-alone usage
+gulp.task('test-notify-only', function() {
+    process.env.NODE_ENV='test';
+    gulp.src(TEST_FILES_GLOB, {read: false})
+        .pipe(mocha({
+            reporter: 'mocha-notifier-reporter'
+        }));
 });
 
 gulp.task('default', [

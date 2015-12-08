@@ -38,6 +38,9 @@ var config = {
       name: 'jupyterlab'
     },
     port: 3000,
+    mongodb: {
+      url: 'mongodb://localhost/jupyterlab-test'
+    }
   },
 
   production: {
