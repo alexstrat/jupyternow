@@ -20,13 +20,29 @@ var isURLOrNullValidator = validate({validator: function(value) {
  *
  * Server represents a Jupyter Notbook server. It contains:
  * - access restriction data and methods associated
+ * - invatations to access
  * - methods to start and stop the underlying Jupyter notebook instance
  * (controlled thru `Spawner` instance)
  *
  * ServerUser is sub-doc of Server to store users of a server.
+ * ServerInvitation is sub-doc of Server that stores invitations to the server.
  */
 var ServerUserSchema = mongoose.Schema({
   auth0_user_id: {type: String, unique: true}
+});
+
+var ServerInvitationSchema = mongoose.Schema({
+  invitee_email: {
+    type: String,
+    unique: true,
+    validate: validate({validator:'isEmail'})
+  },
+  inviter_auth0_user_id: {
+    type: String
+  },
+  notebook_path: {
+    type: String
+  }
 });
 
 var ServerSchema = mongoose.Schema({
@@ -54,7 +70,9 @@ var ServerSchema = mongoose.Schema({
     validate: isURLOrNullValidator,
   },
 
-  users: [ServerUserSchema]
+  users: [ServerUserSchema],
+
+  invitations: [ServerInvitationSchema]
 
 });
 
@@ -78,6 +96,55 @@ extend(ServerSchema.methods, {
 
     // returns a Promise
     return Promise.resolve(has_user);
+  },
+
+  /**
+   * Store a new invitation.
+   * @param {String} invitee_email
+   * @param {Object} options
+   */
+  addInvitation: function(invitee_email, options) {
+    var data = {invitee_email: invitee_email};
+    data = extend(data, options);
+    this.invitations.push(data);
+    return this.save();
+  },
+
+  /**
+   * Returns if an email is part of the invitations.
+   * @param  {String}  invitee_email - the email to check
+   * @return {Promise<Boolean>} resolves true if part of the invitations
+   */
+  isInvited: function(invitee_email) {
+    // get all invited emails
+    var invitee_emails = this.invitations.map(function(invitation) {
+      return invitation.invitee_email;
+    });
+    // check if email is part of invitee emails
+    var is_invitied = invitee_emails.indexOf(invitee_email) != -1;
+    // return a Promise
+    return Promise.resolve(is_invitied);
+  },
+
+  /**
+   * Add the user (auth0_user_id, user_email) to the group of users if his email
+   * is among the ivitations.
+   * @param {String} auth0_user_id Aauth0 user id
+   * @param {String} user_email user email
+   */
+  addAsServerUserIfInvited: function(auth0_user_id, user_email) {
+    var self = this;
+    return self
+      .isInvited(user_email)
+      .then(function(is_invitied) {
+        if(!is_invitied) {
+          return Promise.resolve();
+        } else {
+          // ok, add the user
+          self.users.push({auth0_user_id: auth0_user_id});
+          return self.save();
+        }
+      });
   },
 
   /**
