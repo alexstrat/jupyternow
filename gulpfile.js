@@ -48,22 +48,26 @@ function handleError(err) {
   this.emit('end');
 }
 
-var TEST_FILES_GLOB = './test/**/*.js';
+var TEST_FILES_GLOB = './test/**/*.{js,coffee}';
 gulp.task('test', function(){
   process.env.NODE_ENV='test';
+  require('coffee-script/register');
   return gulp.src(TEST_FILES_GLOB, {read: false})
         .pipe(mocha({reporter: 'dot'}))
         .on('error', handleError);
 });
 
 gulp.task('test-watch', function() {
-    gulp.watch(['./test/**/*.js', './app/**/*.js'], ['test-notify-only']);
+    gulp.watch(['./test/**/*.{js,coffee}', './app/**/*.{js,coffee}'], ['test-notify-only']);
 });
 // stand-alone usage
 gulp.task('test-notify-only', function() {
     process.env.NODE_ENV='test';
+    require('coffee-script/register');
     gulp.src(TEST_FILES_GLOB, {read: false})
-        .pipe(mocha({reporter: notifierReporter.decorate('dot')}))
+        .pipe(mocha({
+          reporter: notifierReporter.decorate('dot'),
+        }))
         .on('error', handleError);
 });
 
