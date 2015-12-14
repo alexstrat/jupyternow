@@ -37,6 +37,11 @@ var config = {
     app: {
       name: 'jupyterlab'
     },
+    Auth0: {
+      domain: 'notebookhub.auth0.com',
+      clientID: process.env.AUTH0_CLIENT_ID,
+      clientSecret: process.env.AUTH0_CLIENT_SECRET,
+    },
     port: 3000,
     mongodb: {
       url: 'mongodb://localhost/jupyterlab-test'

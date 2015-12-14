@@ -40,6 +40,8 @@
     "gulp-mocha": "^2.2.0",
     "gulp-nodemon": "^2.0.2",
     "gulp-plumber": "^1.0.0",
-    "mocha-notifier-reporter": "^0.1.1"
+    "mocha-notifier-reporter": "^0.1.1",
+    "passport-stub": "^1.0.1",
+    "supertest": "^1.1.0"
   }
 }
