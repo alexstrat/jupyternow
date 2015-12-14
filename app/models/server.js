@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
     validator = validate.validatorjs,
     extend = require('extend'),
     uuid = require('node-uuid'),
+    Promise = require('bluebird'),
     Spawner = require('../spawners').DEFAULT_SPAWNER;
 
 /**
