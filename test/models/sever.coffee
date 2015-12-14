@@ -3,19 +3,22 @@ expect = chai.expect
 chai.use require 'chai-as-promised'
 Promise = require 'bluebird'
 config = require '../../config/config'
-require('../../config/mongoose') config
 Server = require '../../app/models/server.js'
 
 describe 'Server', ->
 
+    db_connection = null
     server = null
     beforeEach ->
+        db_connection = require('../../config/mongoose') config
+
         server = Server(
             name: 'Test server'
             slug: 'test_server')
         server.save()
-    afterEach ->
+    afterEach (done) ->
         server.remove()
+        db_connection.disconnect(done)
 
     describe '#hasUser', ->
 
