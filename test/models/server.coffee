@@ -16,9 +16,10 @@ describe 'Server', ->
             name: 'Test server'
             slug: 'test_server')
         server.save()
-    afterEach (done) ->
-        server.remove()
-        db_connection.disconnect(done)
+    afterEach  ->
+        return server.remove()
+                     .then ->
+                        return db_connection.disconnect()
 
     describe '#hasUser', ->
 
