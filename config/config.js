@@ -27,7 +27,6 @@ cf.development.port = cf.test.port = cf.production.port = 3000;
 // **************
 // Docker config
 
-
 cf.development.docker = {
   // in developpent we use boot2docker-compatible config, that will use env variables
   // for docker config
@@ -54,6 +53,7 @@ cf.production.docker.app_label = 'jupyternow';
 
 // **************
 // MongoDB config
+
 cf.development.mongodb = cf.test.mongodb = cf.production.mongodb = {};
 
 cf.development.mongodb = {url: 'mongodb://localhost/jupyternow'};
