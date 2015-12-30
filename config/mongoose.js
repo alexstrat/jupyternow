@@ -6,4 +6,4 @@ module.exports = function(config) {
 
   // connects mongodb
   return mongoose.connect(config.mongodb.url);
-}
+};

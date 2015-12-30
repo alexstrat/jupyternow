@@ -6,55 +6,74 @@ var path = require('path'),
 
 envdir.core.environment.load('envdir');
 
-var config = {
-  development: {
-    root: rootPath,
-    app: {
-      name: 'jupyterlab'
-    },
-    port: 3000,
-    docker: {
-      // null will use ENV variables
-      host_config: null,
-      // the IP accessible to the proxy server
-      host_ip: url.parse(process.env.DOCKER_HOST).hostname,
-
-      // will set the `app` label
-      app_label: 'jupyterlab_dev'
-    },
-    Auth0: {
-      domain: 'notebookhub.auth0.com',
-      clientID: process.env.AUTH0_CLIENT_ID,
-      clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    },
-    mongodb: {
-      url: process.env.MONGODB_URL
-    }
-  },
-
-  test: {
-    root: rootPath,
-    app: {
-      name: 'jupyterlab'
-    },
-    Auth0: {
-      domain: 'notebookhub.auth0.com',
-      clientID: process.env.AUTH0_CLIENT_ID,
-      clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    },
-    port: 3000,
-    mongodb: {
-      url: 'mongodb://localhost/jupyterlab-test'
-    }
-  },
-
-  production: {
-    root: rootPath,
-    app: {
-      name: 'jupyterlab'
-    },
-    port: 3000,
-  }
+// config
+var cf = {
+  development: {},
+  test: {},
+  production: {}
 };
 
-module.exports = config[env];
+// **************
+// Express config
+
+cf.development.root = cf.test.root = cf.production.root = rootPath;
+
+cf.development.app = cf.test.app = cf.production.app = {
+  name: 'jupyternow'
+};
+
+cf.development.port = cf.test.port = cf.production.port = 3000;
+
+// **************
+// Docker config
+
+
+cf.development.docker = {
+  // in developpent we use boot2docker-compatible config, that will use env variables
+  // for docker config
+  host_config: null,
+  // the IP accessible to the proxy server
+  host_ip: url.parse(process.env.DOCKER_HOST).hostname
+};
+
+// test = dev, it'll be just fine for now
+cf.test.docker = cf.development.docker;
+
+cf.production.docker = {
+  // for production, we'll use host's docker socket shared as a volume
+  host_config: '/docker.sock',
+  // see docker_spawner.js: we use diretly the IP of te container
+  host_ip: null
+};
+
+// used to label containers
+cf.development.docker.app_label =
+cf.test.docker.app_label =
+cf.production.docker.app_label = 'jupyternow';
+
+
+// **************
+// MongoDB config
+cf.development.mongodb = cf.test.mongodb = cf.production.mongodb = {};
+
+cf.development.mongodb = {url: 'mongodb://localhost/jupyternow'};
+cf.test.mongodb = {url: 'mongodb://localhost/jupyternow-test'};
+// for prodcution, mongolab creds are stored in env variable
+cf.production.mongodb = {url: process.env.MONGODB_URL};
+
+
+// **************
+// Auth0 config
+
+var Auth0ClientCreds = JSON.parse(process.env.AUTH0_CLIENT_CREDS);
+
+cf.development.Auth0 = cf.production.Auth0 = {
+  domain: Auth0ClientCreds.domain,
+  clientID: Auth0ClientCreds.id,
+  clientSecret: Auth0ClientCreds.secret
+};
+
+// bullshit for test
+cf.test.Auth0 = {domain: 'bullshit.it', clientID: 'xxx', clientSecret: 'xxx'};
+
+module.exports = cf[env];
