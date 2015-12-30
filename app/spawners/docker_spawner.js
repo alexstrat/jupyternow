@@ -1,5 +1,6 @@
 var Docker = require('dockerode'),
-    config = require('../../config/config.js');
+    config = require('../../config/config.js'),
+    Promise = require('bluebird');
 
 var IMAGE_NAME = 'jupyter/minimal-notebook';
 var EXPOSED_PORT = '8888';
