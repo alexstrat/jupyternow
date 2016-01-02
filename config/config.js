@@ -31,8 +31,11 @@ cf.development.docker = {
   // in developpent we use boot2docker-compatible config, that will use env variables
   // for docker config
   host_config: null,
-  // the IP accessible to the proxy server
-  host_ip: url.parse(process.env.DOCKER_HOST).hostname
+
+  // will publish the jupyter container ports on host
+  networking_strategy: 'publish',
+  // the IP adress of the host machine accessible to proxy server
+  public_host_ip: url.parse(process.env.DOCKER_HOST).hostname
 };
 
 // test = dev, it'll be just fine for now
@@ -42,7 +45,7 @@ cf.production.docker = {
   // for production, we'll use host's docker socket shared as a volume
   host_config: '/docker.sock',
   // see docker_spawner.js: we use diretly the IP of te container
-  host_ip: null
+  networking_strategy: 'private'
 };
 
 // used to label containers

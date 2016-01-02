@@ -26,13 +26,16 @@ DockerSpawner.prototype.start = function(server_data) {
     Image: IMAGE_NAME,
     Cmd: ['start-notebook.sh',
           '--NotebookApp.base_url='+base_url],
-    HostConfig: {
-      PublishAllPorts: true
-    },
     Labels: {
       app: config.docker.app_label
     }
   };
+
+  if(config.networking_strategy === 'publish') {
+    container_config.HostConfig = {
+        PublishAllPorts: true
+    };
+  }
 
   return docker
     .createContainerAsync(container_config)
@@ -52,9 +55,10 @@ DockerSpawner.prototype.start = function(server_data) {
 
     }).then(function(inspect_data){
 
-      // let's extract the port from inspect data
+      // let's extract the published_port from inspect data
       var NetworkSettings = inspect_data.NetworkSettings;
-      self.port = NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
+      self._published_port = NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
+      self._container_ip = NetworkSettings.IPAddress;
 
       return {
         reference: self.getReference(),
@@ -90,8 +94,23 @@ DockerSpawner.prototype.getReference = function() {
 };
 
 DockerSpawner.prototype.getServerAddress = function() {
-  var ip = config.docker.host_ip;
-  return 'http://'+ip+':'+this.port;
+  var net_strat = config.networking_strategy;
+  var ip, port;
+
+  switch(net_strat){
+    case 'publish':
+      ip = config.docker.public_host_ip;
+      port = this._published_port;
+      break;
+    case 'private':
+      ip = this._container_ip;
+      port = EXPOSED_PORT;
+      break;
+    default:
+      throw Error('Unknown docker network strategy "'+net_strat+'"');
+  }
+
+  return 'http://'+ip+':'+port;
 };
 
 module.exports = DockerSpawner;
