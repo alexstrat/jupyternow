@@ -41,8 +41,7 @@ router.get('/callback',
   });
 
 module.exports = function(app) {
-  //FIX ME: please add a real secret
-  app.use(session({secret: 'foo'}));
+  app.use(session({secret: config.session_secret}));
 
   app.use(passport.initialize());
   app.use(passport.session());

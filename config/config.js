@@ -24,6 +24,9 @@ cf.development.app = cf.test.app = cf.production.app = {
 
 cf.development.port = cf.test.port = cf.production.port = 3000;
 
+cf.development.session_secret = cf.test.session_secret = 'foo';
+cf.production.session_secret = process.env.SESSION_SECRET;
+
 // **************
 // Docker config
 
