@@ -41,7 +41,25 @@ router.get('/callback',
   });
 
 module.exports = function(app) {
-  app.use(session({secret: config.session_secret}));
+
+  // express session configuration
+  var sess = {
+    secret: config.session_secret
+  };
+  if(app.get('env') === 'production') {
+    var RedisStore = require('connect-redis')(session);
+    sess.store = new RedisStore({
+      url: config.redis.url
+    });
+  }
+  app.use(session(sess));
+
+  app.use(function (req, res, next) {
+    if (!req.session) {
+      return next(new Error('Session unavailbale'));
+    }
+    next();
+  });
 
   app.use(passport.initialize());
   app.use(passport.session());

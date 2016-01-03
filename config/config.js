@@ -69,6 +69,16 @@ cf.production.mongodb = {url: process.env.MONGODB_URL};
 
 
 // **************
+// Redis config
+
+//production only
+
+var reidsPort = process.env.REDIS_PORT || 'tcp://bullshit:7398';
+var redisUrl = url.parse(reidsPort);
+cf.production.redis = {url: 'redis://'+redisUrl.hostname+':'+redisUrl.port};
+
+
+// **************
 // Auth0 config
 
 var Auth0ClientCreds = JSON.parse(process.env.AUTH0_CLIENT_CREDS);
