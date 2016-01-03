@@ -31,7 +31,7 @@ DockerSpawner.prototype.start = function(server_data) {
     }
   };
 
-  if(config.networking_strategy === 'publish') {
+  if(config.docker.networking_strategy === 'publish') {
     container_config.HostConfig = {
         PublishAllPorts: true
     };
@@ -54,10 +54,13 @@ DockerSpawner.prototype.start = function(server_data) {
       return self.getContainer().inspectAsync();
 
     }).then(function(inspect_data){
-
       // let's extract the published_port from inspect data
       var NetworkSettings = inspect_data.NetworkSettings;
-      self._published_port = NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
+      if(config.docker.networking_strategy === 'publish') {
+        self._published_port = NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
+      } else {
+        self._published_port = null;
+      }
       self._container_ip = NetworkSettings.IPAddress;
 
       return {
@@ -94,7 +97,7 @@ DockerSpawner.prototype.getReference = function() {
 };
 
 DockerSpawner.prototype.getServerAddress = function() {
-  var net_strat = config.networking_strategy;
+  var net_strat = config.docker.networking_strategy;
   var ip, port;
 
   switch(net_strat){
