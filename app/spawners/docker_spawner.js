@@ -1,6 +1,7 @@
 var Docker = require('dockerode'),
     config = require('../../config/config.js'),
-    Promise = require('bluebird');
+    Promise = require('bluebird'),
+    logging = require('winston');
 
 var IMAGE_NAME = 'jupyter/minimal-notebook';
 var EXPOSED_PORT = '8888';
@@ -18,6 +19,8 @@ function DockerSpawner(reference) {
 }
 
 DockerSpawner.prototype.start = function(server_data) {
+  logging.profile('DockerSpawner#start');
+
   var self = this;
   var docker = self.docker;
 
@@ -37,6 +40,7 @@ DockerSpawner.prototype.start = function(server_data) {
     };
   }
 
+  logging.info('Create a docker container for %j', server_data);
   return docker
     .createContainerAsync(container_config)
     .then(function(container) {
@@ -45,6 +49,8 @@ DockerSpawner.prototype.start = function(server_data) {
 
       // store the reeference now
       self.reference = {'container_id': container.id};
+
+      logging.info('Start the docker container %s', container.id);
 
       // start the container
       return container.startAsync();
@@ -62,6 +68,9 @@ DockerSpawner.prototype.start = function(server_data) {
         self._published_port = null;
       }
       self._container_ip = NetworkSettings.IPAddress;
+
+      logging.info('Docker container %s inspected and ready to be used', inspect_data.Id);
+      logging.profile('DockerSpawner#start');
 
       return {
         reference: self.getReference(),
