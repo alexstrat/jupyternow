@@ -75,7 +75,10 @@ cf.production.mongodb = {url: process.env.MONGODB_URL};
 
 var reidsPort = process.env.REDIS_PORT || 'tcp://bullshit:7398';
 var redisUrl = url.parse(reidsPort);
-cf.production.redis = {url: 'redis://'+redisUrl.hostname+':'+redisUrl.port};
+cf.production.redis = {
+  url: 'redis://'+redisUrl.hostname+':'+redisUrl.port,
+  pass: process.env.REDIS_PASS || 'foo'
+};
 
 
 // **************

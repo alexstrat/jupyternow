@@ -49,7 +49,8 @@ module.exports = function(app) {
   if(app.get('env') === 'production') {
     var RedisStore = require('connect-redis')(session);
     sess.store = new RedisStore({
-      url: config.redis.url
+      url: config.redis.url,
+      pass: config.redis.pass
     });
   }
   app.use(session(sess));
