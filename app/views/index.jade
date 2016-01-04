@@ -5,8 +5,9 @@ block append js
   script(type="text/javascript").
     var lock = new Auth0Lock("#{Auth0.clientID}", 'notebookhub.auth0.com');
     function signin() {
+      var domain = window.document.domain;
       lock.show({
-          callbackURL: 'http://test1.com:3000/callback?redirect_to=/dispatch'
+          callbackURL: 'http://'+domain+'/callback?redirect_to=/dispatch'
         });
     ;}
 
