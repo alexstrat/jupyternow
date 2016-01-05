@@ -46,7 +46,7 @@ cf.test.docker = cf.development.docker;
 
 cf.production.docker = {
   // for production, we'll use host's docker socket shared as a volume
-  host_config: '/docker.sock',
+  host_config: {socketPath: '/docker.sock'},
   // see docker_spawner.js: we use diretly the IP of te container
   networking_strategy: 'private'
 };
