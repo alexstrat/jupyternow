@@ -3,7 +3,8 @@ var Docker = require('dockerode'),
     Promise = require('bluebird'),
     rp = require('request-promise'),
     rp_errors = require('request-promise/lib/errors'),
-    logging = require('winston');
+    logging = require('winston'),
+    poll = require('../lib/poll');
 
 var IMAGE_NAME = 'jupyter/minimal-notebook';
 var EXPOSED_PORT = '8888';
@@ -20,27 +21,22 @@ function DockerSpawner(reference) {
   this.reference = reference;
 }
 
-var IsUp = function(server_address) {
+DockerSpawner.prototype.isUp = function() {
+  var self = this;
+
   return rp({
       'method': 'GET',
-      'uri': server_address,
+      'uri': self.getServerAddress(),
        timeout: 200
   })
   .catch(rp_errors.StatusCodeError, function(){return null;})
-  .then(function(){return true;}, function(){ return false;});
-};
-
-var CheckUntillItsUp = function(server_address){
-  var poll = function() {
-    return IsUp(server_address)
-    .then(function(up) {
-      logging.info('is up?'+up);
-      if(!up) {
-        return Promise.delay(100).then(poll);
-      }
-    });
-  };
-  return poll().timeout(2000);
+  .then(
+    function(){return true;},
+    function(){ return false;}
+  ).then(function(up) {
+    logging.info('Docker container %j is up:'+up, self.getReference());
+    return up;
+  });
 };
 
 DockerSpawner.prototype.start = function(server_data) {
@@ -97,7 +93,7 @@ DockerSpawner.prototype.start = function(server_data) {
       logging.info('Docker container %s inspected',  self.getReference());
     })
     .then(function() {
-      return CheckUntillItsUp(self.getServerAddress());
+      return poll(self.isUp.bind(self));
     }).then(function() {
       logging.info('Docker container %s up and ready to be used', self.getReference());
       logging.profile('DockerSpawner#start');
