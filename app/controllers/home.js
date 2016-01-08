@@ -21,22 +21,15 @@ router.get('/dispatch', function (req, res, next) {
     }
 
     Server.findByUserId(user.id).then(function(servers){
-        switch(servers.length) {
-            case 1:
-                var server = servers[0];
-                res.redirect('/s/'+server.slug);
-                break;
-            case 0:
-                Server.createAndStartDefaultServerForUser(user)
-                    .then(function(server) {
-                        res.redirect('/s/'+server.slug);
-                    });
-                    break;
-            default:
-                // FIX ME: we want to display a UI to chose server to use
-                var server = servers[0];
-                res.redirect('/s/'+server.slug);
+        if (servers.length === 0) {
+            return Server.createAndStartDefaultServerForUser(user);
+        } else {
+            // FIX ME: we want to display a UI to chose server to use
+            return servers[0];
         }
-    });
+    }).then(function(server) {
+        res.redirect('/s/'+server.slug);
+    })
+    .catch(next);
 });
 
