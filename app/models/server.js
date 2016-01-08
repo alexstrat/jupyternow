@@ -29,13 +29,15 @@ var isURLOrNullValidator = validate({validator: function(value) {
  * ServerInvitation is sub-doc of Server that stores invitations to the server.
  */
 var ServerUserSchema = mongoose.Schema({
-  auth0_user_id: {type: String, unique: true}
+  auth0_user_id: {type: String,
+    //unique: true
+ }
 });
 
 var ServerInvitationSchema = mongoose.Schema({
   invitee_email: {
     type: String,
-    unique: true,
+    //unique: true,
     validate: validate({validator:'isEmail'})
   },
   inviter_auth0_user_id: {
