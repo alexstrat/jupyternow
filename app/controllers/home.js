@@ -32,4 +32,3 @@ router.get('/dispatch', function (req, res, next) {
     })
     .catch(next);
 });
-
