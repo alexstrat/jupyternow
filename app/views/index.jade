@@ -3,6 +3,12 @@ extends layout
 block append js
   script(src="https://cdn.auth0.com/js/lock-8.1.min.js")
   script(type="text/javascript").
+    $(function() {
+      $('.ui.modal.fullscreen')
+        .modal('setting', 'closable', false)
+        .modal('setting', 'duration', 0)
+        .modal('show');
+    })
     var lock = new Auth0Lock("#{Auth0.clientID}", 'notebookhub.auth0.com');
     function signin() {
       var host = location.host;
@@ -12,11 +18,12 @@ block append js
     ;}
 
 block content
-  h1= title
-  p Welcome to #{title}
-  if user
-    p you are authenticated as #{user.displayName}
-  else
-    p
-    | You are unknown please 
-    button(onclick="window.signin()") login
+  .reset.ui.modal.fullscreen
+    .header Connect
+    .content
+      if user
+        p you are authenticated as #{user.displayName}
+      else
+        p
+        | You are unknown please 
+        button(onclick="window.signin()") login

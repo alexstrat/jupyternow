@@ -2,13 +2,15 @@ doctype html
 html(lang='en')
   head
     meta(charset='UTF-8')
-    meta(name='viewport', content='width=device-width')
+    meta(name='viewport', content='width=device-width , initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
     title= title
     block css
-      link(rel='stylesheet', href='/css/style.css')
+      link(rel='stylesheet', href='/components/semantic/dist/semantic.css')
     block js
         script(type="text/javascript").
           !{state}
+        script(src='/components/jquery/dist/jquery.js')
+        script(src='/components/semantic/dist/semantic.js')
       if ENV_DEVELOPMENT
         script(src='http://localhost:35729/livereload.js')
   body
