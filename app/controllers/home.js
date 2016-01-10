@@ -6,18 +6,17 @@ module.exports = function (app) {
   app.use('/', router);
 };
 
-router.get('/', function (req, res, next) {
-    res.render('index', {
-      title: 'Jupyternow ',
-      user: req.user
+router.get('/login', function (req, res, next) {
+    res.render('login', {
+      title: 'Jupyternow '
     });
 });
 
-router.get('/dispatch', function (req, res, next) {
+router.get('/', function (req, res, next) {
     var user = req.user;
 
     if(!req.user) {
-        return res.send(401);
+        return res.redirect('/login');
     }
 
     Server.findByUserId(user.id).then(function(servers){

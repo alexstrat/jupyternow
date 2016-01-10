@@ -71,4 +71,5 @@ module.exports = function(app) {
     clientID: config.Auth0.clientID
   };
   app.expose(config.Auth0.clientID, 'Auth0.clientID');
+  app.expose(config.Auth0.domain, 'Auth0.domain');
 };

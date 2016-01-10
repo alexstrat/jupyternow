@@ -38,6 +38,10 @@ var doProxyRequest = function(req, res, server) {
 // Routing
 
 router.all('/s/:server_slug*', function (req, res, next) {
+  if(!req.user) {
+    return res.redirect('/login?redirect_to='+req.path);
+  }
+
   var slug = req.params.server_slug;
   Server
     .findBySlug(slug)
@@ -46,17 +50,12 @@ router.all('/s/:server_slug*', function (req, res, next) {
             return res.send(404);
         }
 
-        if(!req.user) {
-             return res.send(401);
-        }
-
         server.hasUser(req.user.id).then(function(has_user) {
             if(has_user) {
-                doProxyRequest(req, res, server)
+                doProxyRequest(req, res, server);
             } else {
-                return res.send(403);
+              return res.redirect('/login?redirect_to='+req.path);
             }
-
         });
     });
 });
