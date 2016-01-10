@@ -54,7 +54,7 @@ router.all('/s/:server_slug*', function (req, res, next) {
             if(has_user) {
                 doProxyRequest(req, res, server);
             } else {
-              return res.redirect('/login?redirect_to='+req.path);
+              return res.send(403);
             }
         });
     });

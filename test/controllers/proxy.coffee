@@ -31,25 +31,27 @@ describe 'Proxy', ->
                     return db_connection.disconnect()
 
     describe 'handle server access restrictions', ->
-        it 'should proxy connection for authorized users', ->
+        it 'logged user / authorized user: should proxy connection', ->
             passportStub.login(id: 'id-foo-bar')
             request(app)
                 .get('/s/fake_server/foo-bar')
                 .expect(200)
 
-        it 'should proxy connection for authorized users', ->
+        it 'logged user / non-authorized user: should 403', ->
             passportStub.login(id: 'id-foo-bar2')
             request(app)
                 .get('/s/fake_server/foo-bar')
                 .expect(403)
 
-
-        it 'should 404 an existant server', ->
+        it 'logged user / unexistant server: should 403', ->
+            passportStub.login(id: 'id-foo-bar')
             request(app)
                 .get('/s/fake_server_that_doesnot_exist/foo-bar')
                 .expect(404)
 
-        it 'should 401 a non logged-id user', ->
+        it 'non logged user: should redirect to login page', ->
             request(app)
                 .get('/s/fake_server/foo-bar')
-                .expect(401)
+                .expect('Location', '/login?redirect_to=/s/fake_server/foo-bar')
+                .expect(302)
+
