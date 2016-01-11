@@ -103,6 +103,21 @@ extend(ServerSchema.methods, {
   },
 
   /**
+   * Return if a profile is part of the users or is invited.
+   * Add the invited user to users of the server if so.
+   * @param  {Object}  profile - profile of the user
+   * @return {Promise<Boolean>}
+   */
+  hasUserOrIsInvited: function(profile) {
+    var self = this;
+    return this.hasUser(profile.id)
+           .then(function(has_user) {
+              if(has_user) return true;
+              return self.addAsServerUserIfInvited(profile);
+            });
+  },
+
+  /**
    * Store a new invitation.
    * @param {String} invitee_email
    * @param {Object} options

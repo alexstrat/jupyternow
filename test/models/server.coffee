@@ -104,3 +104,49 @@ describe 'Server', ->
             add.then ->
                 expect(server.hasUser('toto2-user-id'))
                     .to.eventually.be.false
+
+    describe '#hasUserOrIsInvited', ->
+
+        beforeEach ->
+            server.users.push auth0_user_id: 'id-foo-bar'
+            server.users.push auth0_user_id: 'id-foo-bar-2'
+            server.users.push auth0_user_id: 'id-foo-bar-3'
+            server.save()
+
+        beforeEach ->
+            server.addInvitation 'toto@tata.com',
+                inviter_auth0_user_id: 'id-foo-bar'
+                notebook_path: '/ta/maman'
+
+        it 'should resolve true when user in the list of users', ->
+            profile =
+                id: 'id-foo-bar'
+            profile_2 =
+                id: 'id-foo-bar-2'
+            profile_3 =
+                id: 'id-foo-bar-3'
+
+            Promise.all [
+                expect(server.hasUserOrIsInvited(profile))
+                    .to.eventually.equal(true)
+                expect(server.hasUserOrIsInvited(profile_2))
+                    .to.eventually.equal(true)
+                expect(server.hasUserOrIsInvited(profile_3))
+                    .to.eventually.equal(true)
+            ]
+
+        it 'should resolve true when user is not user but is invited', ->
+            profile =
+                id: 'toto-user-id'
+                emails: [
+                    value: 'toto@tata.com'
+                ]
+            expect(server.hasUserOrIsInvited(profile)).to.eventually.be.true
+
+        it 'should resolve false when user is not user nor invited', ->
+            profile =
+                id: 'toto2-user-id'
+                emails: [
+                    value: 'toto2@tata.com'
+                ]
+            expect(server.hasUserOrIsInvited(profile)).to.eventually.be.false
