@@ -66,12 +66,12 @@ describe 'Server', ->
                 inviter_auth0_user_id: 'id-foo-bar'
                 notebook_path: '/ta/maman'
 
-        it 'should resolve true if email is among invitations', ->
-            expect(server.isInvited('toto@tata.com'))
+        it 'should resolve true if an email is among invitations', ->
+            expect(server.isInvited(['toto@tata.com', 'tits@tata.com']))
                 .to.eventually.equal true
 
-        it 'should resolve false if email is not among invitations', ->
-            expect(server.isInvited('tonton@tata.com'))
+        it 'should resolve false if no email is not among invitations', ->
+            expect(server.isInvited(['tonton@tata.com', 'toots@tata.com']))
                 .to.eventually.equal false
 
     describe '#addAsServerUserIfInvited', ->
@@ -82,11 +82,21 @@ describe 'Server', ->
                 notebook_path: '/ta/maman'
 
         it 'should add the user if invited', ->
-            server.addAsServerUserIfInvited('toto-user-id', 'toto@tata.com').then ->
+            profile =
+                id: 'toto-user-id'
+                emails: [
+                    value: 'toto@tata.com'
+                ]
+            server.addAsServerUserIfInvited(profile).then ->
                 expect(server.hasUser('toto-user-id'))
                     .to.eventually.be.true
 
         it 'should not add the user if not invitied', ->
-            server.addAsServerUserIfInvited('toto2-user-id', 'toto2@tata.com').then ->
+            profile =
+                id: 'toto2-user-id'
+                emails: [
+                    value: 'toto2@tata.com'
+                ]
+            server.addAsServerUserIfInvited(profile).then ->
                 expect(server.hasUser('toto2-user-id'))
                     .to.eventually.be.false

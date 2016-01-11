@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "array-intersection": "^0.1.2",
     "bluebird": "^2.9.34",
     "body-parser": "^1.13.3",
     "browserify-middleware": "^7.0.0",

@@ -4,7 +4,8 @@ var mongoose = require('mongoose'),
     extend = require('extend'),
     uuid = require('node-uuid'),
     Promise = require('bluebird'),
-    Spawner = require('../spawners').DEFAULT_SPAWNER;
+    Spawner = require('../spawners').DEFAULT_SPAWNER,
+    intersection = require('array-intersection');
 
 /**
  * Vaidation utils
@@ -115,36 +116,40 @@ extend(ServerSchema.methods, {
 
   /**
    * Returns if an email is part of the invitations.
-   * @param  {String}  invitee_email - the email to check
+   * @param  {Array<String>}  email - the emails to check
    * @return {Promise<Boolean>} resolves true if part of the invitations
    */
-  isInvited: function(invitee_email) {
+  isInvited: function(emails) {
     // get all invited emails
     var invitee_emails = this.invitations.map(function(invitation) {
       return invitation.invitee_email;
     });
     // check if email is part of invitee emails
-    var is_invitied = invitee_emails.indexOf(invitee_email) != -1;
+    var is_invited = intersection(invitee_emails, emails).length > 0;
     // return a Promise
-    return Promise.resolve(is_invitied);
+    return Promise.resolve(is_invited);
   },
 
   /**
-   * Add the user (auth0_user_id, user_email) to the group of users if his email
-   * is among the ivitations.
-   * @param {String} auth0_user_id Aauth0 user id
-   * @param {String} user_email user email
+   * Add the user (given its profile) to the group of users if one of its emails
+   * is among the invitations.
+   * @see  http://passportjs.org/docs/profile
+   * @param {Dict} user profile
+   * @return {Promise}
    */
-  addAsServerUserIfInvited: function(auth0_user_id, user_email) {
+  addAsServerUserIfInvited: function(profile) {
     var self = this;
+
+    var userEmails = profile.emails.map(function(email) {return email.value;});
+
     return self
-      .isInvited(user_email)
+      .isInvited(userEmails)
       .then(function(is_invitied) {
         if(!is_invitied) {
           return Promise.resolve();
         } else {
           // ok, add the user
-          self.users.push({auth0_user_id: auth0_user_id});
+          self.users.push({auth0_user_id: profile.id});
           return self.save();
         }
       });
