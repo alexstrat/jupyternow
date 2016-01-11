@@ -21,16 +21,17 @@ proxy.on('error', function(err) {
  * Do proxy a reequest given the server to proxy to
  * @param  {Request} req - request
  * @param   {Response} resp - response
+ * @param   {Next} next - next
  * @param  {Server} server - server to proxy to
  */
-var doProxyRequest = function(req, res, server) {
+var doProxyRequest = function(req, res, next, server) {
     var internal_addres = server.internal_addres;
 
     // treat websocket
     if(req.upgradeSocket) {
-        proxy.ws(req, req.upgradeSocket, {target: internal_addres});
+        proxy.ws(req, req.upgradeSocket, {target: internal_addres}, next);
     } else {
-        proxy.web(req, res, {target: internal_addres});
+        proxy.web(req, res, {target: internal_addres}, next);
     }
 }
 
@@ -53,7 +54,7 @@ router.all('/s/:server_slug*', function (req, res, next) {
               .hasUserOrIsInvited(req.user)
               .then(function(has_user) {
                 if(has_user) {
-                  doProxyRequest(req, res, server);
+                  doProxyRequest(req, res, next, server);
                 } else {
                   return res.send(403);
                 }
