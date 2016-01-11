@@ -155,6 +155,10 @@ extend(ServerSchema.methods, {
   addAsServerUserIfInvited: function(profile) {
     var self = this;
 
+    // naughty cases
+    if(!profile.emails)
+      return Promise.resolve(false);
+
     var userEmails = profile.emails.map(function(email) {return email.value;});
 
     return self

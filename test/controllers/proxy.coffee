@@ -55,3 +55,18 @@ describe 'Proxy', ->
                 .expect('Location', '/login?redirect_to=/s/fake_server/foo-bar')
                 .expect(302)
 
+    describe 'invitation acception mechanism', ->
+        beforeEach ->
+            return fserver.addInvitation 'toto@tata.com',
+                inviter_auth0_user_id: 'id-foo-bar',
+                notebook_path: '/ta/maman'
+
+        it 'the invitee can access the server', ->
+            passportStub.login(
+                id: 'id-toto',
+                emails: [
+                    value: 'toto@tata.com'
+                ])
+            request(app)
+                .get('/s/fake_server/foo-bar')
+                .expect(200)

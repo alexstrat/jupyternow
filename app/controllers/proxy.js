@@ -46,16 +46,17 @@ router.all('/s/:server_slug*', function (req, res, next) {
   Server
     .findBySlug(slug)
     .then(function(server) {
-        if(!server) {
+        if(!server)
             return res.send(404);
-        }
 
-        server.hasUser(req.user.id).then(function(has_user) {
-            if(has_user) {
-                doProxyRequest(req, res, server);
-            } else {
-              return res.send(403);
-            }
-        });
-    });
-});
+        return server
+              .hasUserOrIsInvited(req.user)
+              .then(function(has_user) {
+                if(has_user) {
+                  doProxyRequest(req, res, server);
+                } else {
+                  return res.send(403);
+                }
+              });
+    }).catch(next);
+  });
