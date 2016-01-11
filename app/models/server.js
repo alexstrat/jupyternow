@@ -135,7 +135,7 @@ extend(ServerSchema.methods, {
    * is among the invitations.
    * @see  http://passportjs.org/docs/profile
    * @param {Dict} user profile
-   * @return {Promise}
+   * @return {Promise<Boolean>} resolve true if was added
    */
   addAsServerUserIfInvited: function(profile) {
     var self = this;
@@ -146,11 +146,11 @@ extend(ServerSchema.methods, {
       .isInvited(userEmails)
       .then(function(is_invitied) {
         if(!is_invitied) {
-          return Promise.resolve();
+          return Promise.resolve(false);
         } else {
           // ok, add the user
           self.users.push({auth0_user_id: profile.id});
-          return self.save();
+          return self.save().thenReturn(true);
         }
       });
   },

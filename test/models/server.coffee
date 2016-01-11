@@ -87,7 +87,9 @@ describe 'Server', ->
                 emails: [
                     value: 'toto@tata.com'
                 ]
-            server.addAsServerUserIfInvited(profile).then ->
+            add = server.addAsServerUserIfInvited(profile)
+            expect(add).to.eventually.be.true
+            add.then ->
                 expect(server.hasUser('toto-user-id'))
                     .to.eventually.be.true
 
@@ -97,6 +99,8 @@ describe 'Server', ->
                 emails: [
                     value: 'toto2@tata.com'
                 ]
-            server.addAsServerUserIfInvited(profile).then ->
+            add = server.addAsServerUserIfInvited(profile)
+            expect(add).to.eventually.be.false
+            add.then ->
                 expect(server.hasUser('toto2-user-id'))
                     .to.eventually.be.false
