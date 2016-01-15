@@ -10,6 +10,7 @@ config = require '../../config/config'
 describe 'controllers > proxy >', ->
     fserver = db_connection = app = null
     beforeEach ->
+        this.timeout(3000)
         app = express()
         require('../../config/express')(app, config)
         passportStub.install(app)
