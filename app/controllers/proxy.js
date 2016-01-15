@@ -13,10 +13,6 @@ module.exports = function (app) {
 
 var proxy = httpProxy.createProxyServer({ws:true});
 
-proxy.on('error', function(err) {
-    console.log(err);
-})
-
 /**
  * Do proxy a reequest given the server to proxy to
  * @param  {Request} req - request
