@@ -1,9 +1,11 @@
 var express = require('express'),
   router = express.Router(),
-  Server = require('../models/server');
+  Server = require('../models/server'),
+  logging = require('winston');
 
 module.exports = function (app) {
   app.use('/', router);
+  logging.info('home router mounted on /');
 };
 
 router.get('/login', function (req, res, next) {

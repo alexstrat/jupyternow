@@ -2,10 +2,11 @@ var express = require('express'),
    router = express.Router(),
    Server = require('../models/server'),
    httpProxy = require('http-proxy'),
-   url = require('url');
+   logging = require('winston');
 
 module.exports = function (app) {
   app.use('/', router);
+  logging.info('proxy router mounted on /');
 };
 
 
