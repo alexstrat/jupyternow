@@ -30,7 +30,7 @@ router
             req.server
                 .hasUser(req.user.id)
                 .then(function(has_user) {
-                    if (!has_user) return res.send(403);
+                    if (!has_user) return res.sendStatus(403);
                     next();
                 }).catch(next);
         })
