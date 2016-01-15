@@ -5,7 +5,7 @@ Promise = require 'bluebird'
 config = require '../../config/config'
 Server = require '../../app/models/server.js'
 
-describe 'Server', ->
+describe 'models > Server >', ->
 
     db_connection = null
     server = null
@@ -21,7 +21,7 @@ describe 'Server', ->
                      .then ->
                         return db_connection.disconnect()
 
-    describe '#hasUser', ->
+    describe '#hasUser :', ->
 
         beforeEach ->
             server.users.push auth0_user_id: 'id-foo-bar'
@@ -43,7 +43,7 @@ describe 'Server', ->
             expect(server.hasUser('id-bar-foo'))
                 .to.eventually.equal false
 
-    describe '#addInvitation', ->
+    describe '#addInvitation :', ->
 
         beforeEach ->
             server.addInvitation 'toto@tata.com',
@@ -59,7 +59,7 @@ describe 'Server', ->
             expect(invitation)
                 .to.have.property('notebook_path').that.equals '/ta/maman'
 
-    describe '#isInvited', ->
+    describe '#isInvited :', ->
 
         beforeEach ->
             server.addInvitation 'toto@tata.com',
@@ -74,7 +74,7 @@ describe 'Server', ->
             expect(server.isInvited(['tonton@tata.com', 'toots@tata.com']))
                 .to.eventually.equal false
 
-    describe '#addAsServerUserIfInvited', ->
+    describe '#addAsServerUserIfInvited :', ->
 
         beforeEach ->
             server.addInvitation 'toto@tata.com',
@@ -105,7 +105,7 @@ describe 'Server', ->
                 expect(server.hasUser('toto2-user-id'))
                     .to.eventually.be.false
 
-    describe '#hasUserOrIsInvited', ->
+    describe '#hasUserOrIsInvited :', ->
 
         beforeEach ->
             server.users.push auth0_user_id: 'id-foo-bar'

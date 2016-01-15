@@ -8,7 +8,7 @@ poll = require '../../app/lib/poll'
 everFalseTestFn = () ->
     return Promise.delay(40).then -> false
 
-describe 'poll utility function', ->
+describe 'lib > poll :', ->
 
     it 'should resolve a ending polling', ->
         i = 1

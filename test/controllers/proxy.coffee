@@ -7,7 +7,7 @@ passportStub = require 'passport-stub'
 config = require '../../config/config'
 
 
-describe 'Proxy', ->
+describe 'controllers > proxy >', ->
     fserver = db_connection = app = null
     beforeEach ->
         app = express()
@@ -30,38 +30,38 @@ describe 'Proxy', ->
                .then ->
                     return db_connection.disconnect()
 
-    describe 'handle server access restrictions', ->
-        it 'logged user / authorized user: should proxy connection', ->
+    describe 'access restrictions >', ->
+        it 'logged/authorized : should proxy connection', ->
             passportStub.login(id: 'id-foo-bar')
             request(app)
                 .get('/s/fake_server/foo-bar')
                 .expect(200)
 
-        it 'logged user / non-authorized user: should 403', ->
+        it 'logged/non-authorized : no access (403)', ->
             passportStub.login(id: 'id-foo-bar2')
             request(app)
                 .get('/s/fake_server/foo-bar')
                 .expect(403)
 
-        it 'logged user / unexistant server: should 403', ->
+        it 'logged/no-server : no access (404)', ->
             passportStub.login(id: 'id-foo-bar')
             request(app)
                 .get('/s/fake_server_that_doesnot_exist/foo-bar')
                 .expect(404)
 
-        it 'non logged user: should redirect to login page', ->
+        it 'not-logged : no access (302 redirect: login page)', ->
             request(app)
                 .get('/s/fake_server/foo-bar')
                 .expect('Location', '/login?redirect_to=/s/fake_server/foo-bar')
                 .expect(302)
 
-    describe 'invitation acception mechanism', ->
+    describe 'invitations acceptions >', ->
         beforeEach ->
             return fserver.addInvitation 'toto@tata.com',
                 inviter_auth0_user_id: 'id-foo-bar',
                 notebook_path: '/ta/maman'
 
-        it 'logged: the invitee can access the server', ->
+        it 'logged/invited : should proxy connection', ->
             passportStub.login(
                 id: 'id-toto',
                 emails: [
@@ -71,7 +71,7 @@ describe 'Proxy', ->
                 .get('/s/fake_server/foo-bar')
                 .expect(200)
 
-        it 'logged: non-invited can\'t access the server', ->
+        it 'logged/not-invited : no access (403)', ->
             passportStub.login(
                 id: 'id-toto',
                 emails: [
