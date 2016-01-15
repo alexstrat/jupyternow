@@ -61,7 +61,7 @@ describe 'Proxy', ->
                 inviter_auth0_user_id: 'id-foo-bar',
                 notebook_path: '/ta/maman'
 
-        it 'the invitee can access the server', ->
+        it 'logged: the invitee can access the server', ->
             passportStub.login(
                 id: 'id-toto',
                 emails: [
@@ -70,3 +70,13 @@ describe 'Proxy', ->
             request(app)
                 .get('/s/fake_server/foo-bar')
                 .expect(200)
+
+        it 'logged: non-invited can\'t access the server', ->
+            passportStub.login(
+                id: 'id-toto',
+                emails: [
+                    value: 'tootoot@tata.com'
+                ])
+            request(app)
+                .get('/s/fake_server/foo-bar')
+                .expect(403)
