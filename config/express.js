@@ -4,6 +4,7 @@ var http = require('http');
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var logging = require('winston');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var compress = require('compression');
@@ -48,6 +49,7 @@ module.exports = function(app, config) {
 
   if(app.get('env') === 'development'){
     app.use(function (err, req, res, next) {
+      logging.error(err);
       res.status(err.status || 500);
       res.render('error', {
         message: err.message,
@@ -58,6 +60,7 @@ module.exports = function(app, config) {
   }
 
   app.use(function (err, req, res, next) {
+    logging.error(err);
     res.status(err.status || 500);
       res.render('error', {
         message: err.message,
