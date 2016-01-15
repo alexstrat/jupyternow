@@ -36,7 +36,7 @@ module.exports = function(app, config) {
 
   app.use('/js', browserify(config.root + '/app/client/'));
 
-  var controllers = glob.sync(config.root + '/app/controllers/*/**.js');
+  var controllers = glob.sync(config.root + '/app/controllers/**/**.js');
   controllers.forEach(function (controller) {
     require(controller)(app);
   });
