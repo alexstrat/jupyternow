@@ -44,7 +44,7 @@ router.all('/s/:server_slug*', function (req, res, next) {
     .findBySlug(slug)
     .then(function(server) {
         if(!server)
-            return res.send(404);
+            return res.sendStatus(404);
 
         return server
               .hasUserOrIsInvited(req.user)
@@ -52,7 +52,7 @@ router.all('/s/:server_slug*', function (req, res, next) {
                 if(has_user) {
                   doProxyRequest(req, res, next, server);
                 } else {
-                  return res.send(403);
+                  return res.sendStatus(403);
                 }
               });
     }).catch(next);
