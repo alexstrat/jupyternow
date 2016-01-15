@@ -6,8 +6,9 @@ block append js
     $(function() {
       var lock = new Auth0Lock(Auth0.clientID, Auth0.domain);
         var host = location.host;
+        var redirect_to = Context.redirect_to || '/';
         lock.show({
-            callbackURL: 'http://'+host+'/callback?redirect_to=/',
+            callbackURL: 'http://'+host+'/callback?redirect_to='+redirect_to,
             container: 'login'
           });
 

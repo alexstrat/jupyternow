@@ -7,6 +7,11 @@ module.exports = function (app) {
 };
 
 router.get('/login', function (req, res, next) {
+    var redirect_to = req.query.redirect_to;
+    res.expose({
+        Context: {redirect_to: redirect_to}
+    });
+
     res.render('login', {
       title: 'Jupyternow '
     });
