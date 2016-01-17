@@ -51,6 +51,8 @@ describe 'models > Server >', ->
                 notebook_path: '/ta/maman'
 
         it 'should correctly have pushed push an invitation in the models', ->
+            expect(server.invitations)
+                .to.have.length(1)
             invitation = server.invitations[0]
             expect(invitation)
                 .to.have.property('invitee_email').that.equals 'toto@tata.com'

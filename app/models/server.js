@@ -49,6 +49,8 @@ var ServerInvitationSchema = mongoose.Schema({
   }
 });
 
+var ServerInvitation = mongoose.model('ServerInvitation', ServerInvitationSchema);
+
 var ServerSchema = mongoose.Schema({
 
   name: {
@@ -125,8 +127,11 @@ extend(ServerSchema.methods, {
   addInvitation: function(invitee_email, options) {
     var data = {invitee_email: invitee_email};
     data = extend(data, options);
-    this.invitations.push(data);
-    return this.save();
+
+    var invitation = new ServerInvitation(data);
+    this.invitations.push(invitation);
+
+    return this.save().thenReturn(invitation);
   },
 
   /**
