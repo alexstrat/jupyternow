@@ -21,12 +21,10 @@ exports.sendInvitation = function(invitation) {
             },
             notebook: {
                 name: invitation.notebook.name,
-                // fix me; get absolute URL
-                url: invitation.notebook.path
+                url: invitation.notebook.absoluteURL
             }
         }
     }).catch(function(err) {
-        console.log(err);
         return err;
     });
 };

@@ -18,8 +18,18 @@ var cf = {
 
 cf.development.root = cf.test.root = cf.production.root = rootPath;
 
-cf.development.app = cf.test.app = cf.production.app = {
-  name: 'jupyternow'
+cf.development.app = {
+  name: 'jupyternow',
+  host: 'test1.com:3000'
+};
+
+cf.production.app = {
+  name: 'jupyternow',
+  host: 'app.jupyternow.co'
+};
+cf.test.app = {
+  name: 'jupyternow',
+  host: 'app.test.com'
 };
 
 cf.development.port = cf.test.port = cf.production.port = 3000;

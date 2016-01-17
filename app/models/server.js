@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
     config = require('../../config/config'),
     extend = require('extend'),
     uuid = require('node-uuid'),
+    path = require('path'),
     Promise = require('bluebird'),
     Spawner = require('../spawners').DEFAULT_SPAWNER,
     intersection = require('array-intersection');
@@ -50,7 +51,13 @@ var ServerInvitationSchema = mongoose.Schema({
     validate: validate({validator:'isEmail'})
   }
 });
-  }
+
+ServerInvitationSchema.virtual('notebook.absoluteURL').get(function() {
+    var server = this.__parent;
+    return 'http://'+config.app.host + path.join(
+      /s/+server.slug,
+      this.notebook.path
+    );
 });
 
 var ServerInvitation = mongoose.model('ServerInvitation', ServerInvitationSchema);

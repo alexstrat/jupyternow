@@ -71,6 +71,13 @@ describe 'models > Server >', ->
             expect(invitation)
                 .to.have.deep.property 'notebook.path', 'notebooks/Apple%20stock.ipynb'
 
+        it "should have a notebook.absoluteURL property", ->
+            invitation = server.invitations[0]
+            url = "http://app.test.com/s/test_server/notebooks/Apple%20stock.ipynb"
+            expect(invitation)
+                .to.have.deep.property 'notebook.absoluteURL', url
+
+
     describe '#isInvited :', ->
 
         beforeEach ->
