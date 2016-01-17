@@ -95,4 +95,12 @@ cf.development.Auth0 = cf.production.Auth0 = {
 // bullshit for test
 cf.test.Auth0 = {domain: 'bullshit.it', clientID: 'xxx', clientSecret: 'xxx'};
 
+
+// **************
+// SendWithUs config
+cf.production.SendWithUs = {ApiKey: process.env.SENDWITHUS_API_KEY};
+cf.development.SendWithUs = {ApiKey: process.env.SENDWITHUS_API_KEY};
+cf.test.SendWithUs = {ApiKey: process.env.SENDWITHUS_API_KEY};
+
+
 module.exports = cf[env];
