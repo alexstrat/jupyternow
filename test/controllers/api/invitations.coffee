@@ -1,12 +1,17 @@
 chai = require 'chai'
 expect = chai.expect
+sinon = require 'sinon'
 chai.use require 'chai-as-promised'
+chai.use require 'sinon-chai'
 request = require 'supertest-as-promised'
+
 express = require 'express'
+Promise = require 'bluebird'
 FakeServer = require '../fake-server'
 passportStub = require 'passport-stub'
 config = require '../../../config/config'
 Server = require '../../../app/models/server.js'
+mailer = require '../../../app/mailer'
 
 
 describe 'controllers > api > invitations >', ->
@@ -34,6 +39,13 @@ describe 'controllers > api > invitations >', ->
                     return db_connection.disconnect()
 
     describe 'POST >', ->
+        beforeEach ->
+            sinon
+                .stub mailer, 'sendInvitation', ->
+                    return Promise.resolve()
+        afterEach ->
+            mailer.sendInvitation.restore()
+
         it 'logged/unauthorized: should refuse (403)', ->
             passportStub.login(id: 'id-foo-bar2')
             request(app)
@@ -62,6 +74,7 @@ describe 'controllers > api > invitations >', ->
                 .send({ email: 'invitee@tata.com', notebook: 'Foo.ipynb' })
                 .expect(201)
                 .then ->
+                    expect(mailer.sendInvitation).have.been.calledOnce
                     invited = Server.findBySlug("fake_server")
                                     .call('isInvited', ['invitee@tata.com'])
                     expect(invited)

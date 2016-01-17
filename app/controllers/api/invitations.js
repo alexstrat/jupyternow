@@ -2,6 +2,7 @@ var express = require('express'),
   router = express.Router(),
   Server = require('../../models/server'),
   bodyParser = require('body-parser'),
+  mailer = require('../../mailer'),
   logging = require('winston');
 
 module.exports = function (app) {
@@ -42,6 +43,9 @@ router
                 .addInvitation(email, {
                     inviter_auth0_user_id: req.user.id,
                     notebook_path: notebook
+                })
+                .then(function(invitation) {
+                    return mailer.sendInvitation(invitation);
                 })
                 .then(function() {
                     res.sendStatus(201);

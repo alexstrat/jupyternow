@@ -48,6 +48,8 @@
     "gulp-plumber": "^1.0.0",
     "mocha-notifier-reporter": "^0.1.1",
     "passport-stub": "^1.0.1",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0",
     "supertest": "^1.1.0",
     "supertest-as-promised": "^2.0.2"
   }
