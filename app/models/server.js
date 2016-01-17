@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
     validate = require('mongoose-validator'),
     validator = validate.validatorjs,
+    config = require('../../config/config'),
     extend = require('extend'),
     uuid = require('node-uuid'),
     Promise = require('bluebird'),
@@ -36,16 +37,19 @@ var ServerUserSchema = mongoose.Schema({
 });
 
 var ServerInvitationSchema = mongoose.Schema({
+  notebook: {
+    name: {type: String},
+    path: {type: String}
+  },
+  inviter: {
+    full_name: {type: String},
+    user_id: {type: String}
+  },
   invitee_email: {
     type: String,
-    //unique: true,
     validate: validate({validator:'isEmail'})
-  },
-  inviter_auth0_user_id: {
-    type: String
-  },
-  notebook_path: {
-    type: String
+  }
+});
   }
 });
 
@@ -122,12 +126,21 @@ extend(ServerSchema.methods, {
   /**
    * Store a new invitation.
    * @param {String} invitee_email
-   * @param {Object} options
+   * @param {Obj} notebook
+   * @param {String} notebook.name
+   * @param {String} notebook.path
+   * @param {Obj} inviter_profile
+   * @return {Promise<Inviation>}
    */
-  addInvitation: function(invitee_email, options) {
-    var data = {invitee_email: invitee_email};
-    data = extend(data, options);
-
+  addInvitation: function(invitee_email, notebook, inviter_profile) {
+    var data = {
+      invitee_email: invitee_email,
+      notebook: notebook,
+      inviter: {
+        full_name: inviter_profile.full_name,
+        user_id: inviter_profile.id
+      }
+    };
     var invitation = new ServerInvitation(data);
     this.invitations.push(invitation);
 

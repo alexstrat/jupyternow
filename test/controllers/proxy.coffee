@@ -58,9 +58,14 @@ describe 'controllers > proxy >', ->
 
     describe 'invitations acceptions >', ->
         beforeEach ->
-            return fserver.addInvitation 'toto@tata.com',
-                inviter_auth0_user_id: 'id-foo-bar',
-                notebook_path: '/ta/maman'
+            notebook =
+                name: 'Apple Stock'
+                path: 'notebooks/Apple%20stock.ipynb'
+            profile =
+                id: 'id-foo-bar'
+                full_name: "Alex L"
+
+            fserver.addInvitation 'toto@tata.com', notebook, profile
 
         it 'logged/invited : should proxy connection', ->
             passportStub.login(

@@ -46,27 +46,42 @@ describe 'models > Server >', ->
     describe '#addInvitation :', ->
 
         beforeEach ->
-            server.addInvitation 'toto@tata.com',
-                inviter_auth0_user_id: 'id-foo-bar'
-                notebook_path: '/ta/maman'
+            notebook =
+                name: 'Apple Stock'
+                path: 'notebooks/Apple%20stock.ipynb'
+            profile =
+                id: 'id-foo-bar'
+                full_name: "Alex L"
+
+            server.addInvitation 'toto@tata.com', notebook, profile
 
         it 'should correctly have pushed push an invitation in the models', ->
             expect(server.invitations)
                 .to.have.length(1)
+
             invitation = server.invitations[0]
             expect(invitation)
-                .to.have.property('invitee_email').that.equals 'toto@tata.com'
+                .to.have.property 'invitee_email', 'toto@tata.com'
             expect(invitation)
-                .to.have.property('inviter_auth0_user_id').that.equals 'id-foo-bar'
+                .to.have.deep.property 'inviter.user_id', 'id-foo-bar'
             expect(invitation)
-                .to.have.property('notebook_path').that.equals '/ta/maman'
+                .to.have.deep.property 'inviter.full_name', 'Alex L'
+            expect(invitation)
+                .to.have.deep.property 'notebook.name', 'Apple Stock'
+            expect(invitation)
+                .to.have.deep.property 'notebook.path', 'notebooks/Apple%20stock.ipynb'
 
     describe '#isInvited :', ->
 
         beforeEach ->
-            server.addInvitation 'toto@tata.com',
-                inviter_auth0_user_id: 'id-foo-bar'
-                notebook_path: '/ta/maman'
+            notebook =
+                name: 'Apple Stock'
+                path: 'notebooks/Apple%20stock.ipynb'
+            profile =
+                id: 'id-foo-bar'
+                full_name: "Alex L"
+
+            server.addInvitation 'toto@tata.com', notebook, profile
 
         it 'should resolve true if an email is among invitations', ->
             expect(server.isInvited(['toto@tata.com', 'tits@tata.com']))
@@ -79,10 +94,14 @@ describe 'models > Server >', ->
     describe '#addAsServerUserIfInvited :', ->
 
         beforeEach ->
-            server.addInvitation 'toto@tata.com',
-                inviter_auth0_user_id: 'id-foo-bar'
-                notebook_path: '/ta/maman'
+            notebook =
+                name: 'Apple Stock'
+                path: 'notebooks/Apple%20stock.ipynb'
+            profile =
+                id: 'id-foo-bar'
+                full_name: "Alex L"
 
+            server.addInvitation 'toto@tata.com', notebook, profile
         it 'should add the user if invited', ->
             profile =
                 id: 'toto-user-id'
@@ -116,9 +135,14 @@ describe 'models > Server >', ->
             server.save()
 
         beforeEach ->
-            server.addInvitation 'toto@tata.com',
-                inviter_auth0_user_id: 'id-foo-bar'
-                notebook_path: '/ta/maman'
+            notebook =
+                name: 'Apple Stock'
+                path: 'notebooks/Apple%20stock.ipynb'
+            profile =
+                id: 'id-foo-bar'
+                full_name: "Alex L"
+
+            server.addInvitation 'toto@tata.com', notebook, profile
 
         it 'should resolve true when user in the list of users', ->
             profile =

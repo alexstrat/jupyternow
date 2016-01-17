@@ -11,8 +11,19 @@ exports.sendInvitation = function(invitation) {
         recipient: {
             address: invitation.invitee_email
         },
+        sender: {
+            name: invitation.inviter.full_name,
+            address: 'no-reply@jupyternow.co'
+        },
         email_data: {
-            nb_link: invitation.notebook_path
+            inviter: {
+                full_name: invitation.inviter.full_name
+            },
+            notebook: {
+                name: invitation.notebook.name,
+                // fix me; get absolute URL
+                url: invitation.notebook.path
+            }
         }
     }).catch(function(err) {
         console.log(err);

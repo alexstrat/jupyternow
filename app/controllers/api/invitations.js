@@ -40,10 +40,7 @@ router
             var notebook = req.body.notebook;
 
             req.server
-                .addInvitation(email, {
-                    inviter_auth0_user_id: req.user.id,
-                    notebook_path: notebook
-                })
+                .addInvitation(email, notebook, req.user)
                 .then(function(invitation) {
                     return mailer.sendInvitation(invitation);
                 })

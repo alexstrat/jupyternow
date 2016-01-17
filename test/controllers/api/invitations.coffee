@@ -39,6 +39,10 @@ describe 'controllers > api > invitations >', ->
                     return db_connection.disconnect()
 
     describe 'POST >', ->
+        notebook =
+            name: "Foo",
+            path: "notebooks/Foo.ipynb"
+
         beforeEach ->
             sinon
                 .stub mailer, 'sendInvitation', ->
@@ -46,32 +50,33 @@ describe 'controllers > api > invitations >', ->
         afterEach ->
             mailer.sendInvitation.restore()
 
+
         it 'logged/unauthorized: should refuse (403)', ->
-            passportStub.login(id: 'id-foo-bar2')
+            passportStub.login(id: 'id-foo-bar2', fullName: 'Alex')
             request(app)
                 .post('/api/s/fake_server/invitations')
-                .send({ email: 'invitee@tata.com', notebook: 'Foo.ipynb' })
+                .send({ email: 'invitee@tata.com', notebook: notebook})
                 .expect(403)
 
         it 'non-logged : should refuse (403)', ->
-            passportStub.login(id: 'id-foo-bar2')
+            passportStub.login(id: 'id-foo-bar2', fullName: 'Alex')
             request(app)
                 .post('/api/s/fake_server/invitations')
-                .send({ email: 'invitee@tata.com', notebook: 'Foo.ipynb' })
+                .send({ email: 'invitee@tata.com', notebook: notebook})
                 .expect(403)
 
         it 'logged/no-server : should refuse (404)', ->
-            passportStub.login(id: 'id-foo-bar')
+            passportStub.login(id: 'id-foo-bar', fullName: 'Alex')
             request(app)
                 .post('/api/s/fake_server_that_doesnot_exist/invitations')
-                .send({ email: 'invitee@tata.com', notebook: 'Foo.ipynb' })
+                .send({ email: 'invitee@tata.com', notebook: notebook})
                 .expect(404)
 
         it 'logged/authorized: should create the invitation', ->
-            passportStub.login(id: 'id-foo-bar')
+            passportStub.login(id: 'id-foo-bar', fullName: 'Alex')
             request(app)
                 .post('/api/s/fake_server/invitations')
-                .send({ email: 'invitee@tata.com', notebook: 'Foo.ipynb' })
+                .send({ email: 'invitee@tata.com', notebook: notebook})
                 .expect(201)
                 .then ->
                     expect(mailer.sendInvitation).have.been.calledOnce
