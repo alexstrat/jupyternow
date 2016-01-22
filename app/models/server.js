@@ -43,7 +43,7 @@ var ServerInvitationSchema = mongoose.Schema({
     path: {type: String}
   },
   inviter: {
-    full_name: {type: String},
+    displayName: {type: String},
     user_id: {type: String}
   },
   invitee_email: {
@@ -145,7 +145,7 @@ extend(ServerSchema.methods, {
       invitee_email: invitee_email,
       notebook: notebook,
       inviter: {
-        full_name: inviter_profile.full_name,
+        displayName: inviter_profile.displayName,
         user_id: inviter_profile.id
       }
     };

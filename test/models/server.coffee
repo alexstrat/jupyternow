@@ -52,7 +52,7 @@ describe 'models > Server >', ->
                 path: '/Apple%20stock.ipynb'
             profile =
                 id: 'id-foo-bar'
-                full_name: "Alex L"
+                displayName: "Alex L"
 
             call = server.addInvitation 'toto@tata.com', notebook, profile
 
@@ -66,7 +66,7 @@ describe 'models > Server >', ->
             expect(invitation)
                 .to.have.deep.property 'inviter.user_id', 'id-foo-bar'
             expect(invitation)
-                .to.have.deep.property 'inviter.full_name', 'Alex L'
+                .to.have.deep.property 'inviter.displayName', 'Alex L'
             expect(invitation)
                 .to.have.deep.property 'notebook.name', 'Apple Stock'
             expect(invitation)
@@ -85,7 +85,7 @@ describe 'models > Server >', ->
                 expect(invitation)
                     .to.have.deep.property 'inviter.user_id', 'id-foo-bar'
                 expect(invitation)
-                    .to.have.deep.property 'inviter.full_name', 'Alex L'
+                    .to.have.deep.property 'inviter.displayName', 'Alex L'
                 expect(invitation)
                     .to.have.deep.property 'notebook.name', 'Apple Stock'
                 expect(invitation)
@@ -102,7 +102,7 @@ describe 'models > Server >', ->
                 path: '/Apple%20stock.ipynb'
             profile =
                 id: 'id-foo-bar'
-                full_name: "Alex L"
+                displayName: "Alex L"
 
             server.addInvitation 'toto@tata.com', notebook, profile
 
@@ -122,7 +122,7 @@ describe 'models > Server >', ->
                 path: '/Apple%20stock.ipynb'
             profile =
                 id: 'id-foo-bar'
-                full_name: "Alex L"
+                displayName: "Alex L"
 
             server.addInvitation 'toto@tata.com', notebook, profile
         it 'should add the user if invited', ->
@@ -163,7 +163,7 @@ describe 'models > Server >', ->
                 path: '/Apple%20stock.ipynb'
             profile =
                 id: 'id-foo-bar'
-                full_name: "Alex L"
+                displayName: "Alex L"
 
             server.addInvitation 'toto@tata.com', notebook, profile
 

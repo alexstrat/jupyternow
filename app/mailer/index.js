@@ -12,12 +12,12 @@ exports.sendInvitation = function(invitation) {
             address: invitation.invitee_email
         },
         sender: {
-            name: invitation.inviter.full_name,
+            name: invitation.inviter.displayName,
             address: 'no-reply@jupyternow.co'
         },
         email_data: {
             inviter: {
-                full_name: invitation.inviter.full_name
+                displayName: invitation.inviter.displayName
             },
             notebook: {
                 name: invitation.notebook.name,
