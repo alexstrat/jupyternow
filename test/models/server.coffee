@@ -44,6 +44,7 @@ describe 'models > Server >', ->
                 .to.eventually.equal false
 
     describe '#addInvitation :', ->
+        call = null;
 
         beforeEach ->
             notebook =
@@ -53,7 +54,7 @@ describe 'models > Server >', ->
                 id: 'id-foo-bar'
                 full_name: "Alex L"
 
-            server.addInvitation 'toto@tata.com', notebook, profile
+            call = server.addInvitation 'toto@tata.com', notebook, profile
 
         it 'should correctly have pushed push an invitation in the models', ->
             expect(server.invitations)
@@ -77,6 +78,21 @@ describe 'models > Server >', ->
             expect(invitation)
                 .to.have.deep.property 'notebook.absoluteURL', url
 
+        it "should resove a perfectly valid invitation", ->
+            call.then (invitation) ->
+                expect(invitation)
+                    .to.have.property 'invitee_email', 'toto@tata.com'
+                expect(invitation)
+                    .to.have.deep.property 'inviter.user_id', 'id-foo-bar'
+                expect(invitation)
+                    .to.have.deep.property 'inviter.full_name', 'Alex L'
+                expect(invitation)
+                    .to.have.deep.property 'notebook.name', 'Apple Stock'
+                expect(invitation)
+                    .to.have.deep.property 'notebook.path', '/Apple%20stock.ipynb'
+                url = "http://app.test.com/s/test_server/notebooks/Apple%20stock.ipynb"
+                expect(invitation)
+                    .to.have.deep.property 'notebook.absoluteURL', url
 
     describe '#isInvited :', ->
 

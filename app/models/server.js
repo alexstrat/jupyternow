@@ -152,6 +152,10 @@ extend(ServerSchema.methods, {
     var invitation = new ServerInvitation(data);
     this.invitations.push(invitation);
 
+    // in order invitation have a proper __parent property
+    // that references the server model, we gotta do that:
+    invitation = this.invitations.id(invitation.id);
+
     return this.save().thenReturn(invitation);
   },
 
