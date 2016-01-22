@@ -56,6 +56,7 @@ ServerInvitationSchema.virtual('notebook.absoluteURL').get(function() {
     var server = this.__parent;
     return 'http://'+config.app.host + path.join(
       /s/+server.slug,
+      'notebooks',
       this.notebook.path
     );
 });

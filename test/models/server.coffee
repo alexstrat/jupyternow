@@ -48,7 +48,7 @@ describe 'models > Server >', ->
         beforeEach ->
             notebook =
                 name: 'Apple Stock'
-                path: 'notebooks/Apple%20stock.ipynb'
+                path: '/Apple%20stock.ipynb'
             profile =
                 id: 'id-foo-bar'
                 full_name: "Alex L"
@@ -69,7 +69,7 @@ describe 'models > Server >', ->
             expect(invitation)
                 .to.have.deep.property 'notebook.name', 'Apple Stock'
             expect(invitation)
-                .to.have.deep.property 'notebook.path', 'notebooks/Apple%20stock.ipynb'
+                .to.have.deep.property 'notebook.path', '/Apple%20stock.ipynb'
 
         it "should have a notebook.absoluteURL property", ->
             invitation = server.invitations[0]
@@ -83,7 +83,7 @@ describe 'models > Server >', ->
         beforeEach ->
             notebook =
                 name: 'Apple Stock'
-                path: 'notebooks/Apple%20stock.ipynb'
+                path: '/Apple%20stock.ipynb'
             profile =
                 id: 'id-foo-bar'
                 full_name: "Alex L"
@@ -103,7 +103,7 @@ describe 'models > Server >', ->
         beforeEach ->
             notebook =
                 name: 'Apple Stock'
-                path: 'notebooks/Apple%20stock.ipynb'
+                path: '/Apple%20stock.ipynb'
             profile =
                 id: 'id-foo-bar'
                 full_name: "Alex L"
@@ -144,7 +144,7 @@ describe 'models > Server >', ->
         beforeEach ->
             notebook =
                 name: 'Apple Stock'
-                path: 'notebooks/Apple%20stock.ipynb'
+                path: '/Apple%20stock.ipynb'
             profile =
                 id: 'id-foo-bar'
                 full_name: "Alex L"
