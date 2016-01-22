@@ -34,6 +34,8 @@ module.exports = function(app, config) {
 
   expstate.extend(app);
 
+  require('./passport')(app);
+
   app.use('/js', browserify(config.root + '/app/client/'));
 
   var controllers = glob.sync(config.root + '/app/controllers/**/**.js');

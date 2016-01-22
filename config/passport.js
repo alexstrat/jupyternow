@@ -1,6 +1,6 @@
 var passport = require('passport'),
     Auth0Strategy = require('passport-auth0'),
-    config = require('../../config/config'),
+    config = require('./config'),
     express = require('express'),
     session = require('express-session'),
     logging = require('winston');
@@ -67,7 +67,6 @@ module.exports = function(app) {
   app.use(passport.session());
 
   app.use('/', router);
-  logging.info('auth router mounted on /');
 
   app.locals.Auth0 = {
     clientID: config.Auth0.clientID
