@@ -9,7 +9,7 @@ define([
 ) {
 
     var getServerSlug = function() {
-        var m = window.location.pathname.match("\/s\/([a-z0-9]+)\/.*");
+        var m = window.location.pathname.match("\/s\/(.[^/]+)\/.*");
         return m[1];
     }
 
