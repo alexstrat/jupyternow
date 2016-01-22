@@ -1,0 +1,17 @@
+.jupyternow-share {
+    float: right;
+    margin: 0 10px;
+    padding-right: 16px;
+    padding-left: 16px
+}
+
+.jupyternow-header {
+    background-color: #435160;
+    padding: 0 1px;
+}
+
+.jupyternow-header .title {
+    font-family: PTSans-Regular;
+    font-size: 25px;
+    color: #FFFFFF;
+}
