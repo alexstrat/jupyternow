@@ -6,7 +6,7 @@ var Docker = require('dockerode'),
     logging = require('winston'),
     poll = require('../lib/poll');
 
-var IMAGE_NAME = 'jupyter/datascience-notebook';
+var IMAGE_NAME = 'alexstrat/jupyternow-notebook';
 var EXPOSED_PORT = '8888';
 
 
