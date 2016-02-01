@@ -221,6 +221,7 @@ extend(ServerSchema.methods, {
       .spawn(server_data)
       .then(function(start_info) {
         self.spawner_reference = start_info.reference;
+        self.markModified('spawner_reference');
         self.internal_addres = start_info.server_address;
 
         return self.save();
@@ -243,6 +244,7 @@ extend(ServerSchema.methods, {
       .restart(server_data)
       .then(function(start_info) {
         self.spawner_reference = start_info.reference;
+        self.markModified('spawner_reference');
         self.internal_addres = start_info.server_address;
 
         return self.save();
@@ -261,6 +263,7 @@ extend(ServerSchema.methods, {
       .stopAppContainer()
       .then(function() {
         self.spawner_reference = s.reference;
+        self.markModified('spawner_reference');
         self.internal_addres = s.address;
 
       return self.save();
