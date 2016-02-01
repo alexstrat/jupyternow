@@ -218,7 +218,29 @@ extend(ServerSchema.methods, {
     };
 
     return s
-      .start(server_data)
+      .spawn(server_data)
+      .then(function(start_info) {
+        self.spawner_reference = start_info.reference;
+        self.internal_addres = start_info.server_address;
+
+        return self.save();
+      });
+  },
+  /**
+   * Restart the server
+   * @return {Promise} resolved when restarted
+   */
+  restart: function() {
+    var self = this;
+
+    var s = self._getSpawner();
+
+    var server_data = {
+      base_url: '/s/'+self.slug
+    };
+
+    return s
+      .restart(server_data)
       .then(function(start_info) {
         self.spawner_reference = start_info.reference;
         self.internal_addres = start_info.server_address;
@@ -236,10 +258,10 @@ extend(ServerSchema.methods, {
     var s = self._getSpawner();
 
     return s
-      .stop()
+      .stopAppContainer()
       .then(function() {
-        self.spawner_reference = null;
-        self.internal_addres = null;
+        self.spawner_reference = s.reference;
+        self.internal_addres = s.address;
 
       return self.save();
     });

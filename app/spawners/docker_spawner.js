@@ -18,15 +18,144 @@ function DockerSpawner(reference) {
   // wrap all methods of the client to return promises
   this.docker = Promise.promisifyAll(docker);
 
-  this.reference = reference;
+  this.reference = reference || {};
 }
 
+/**
+ * Create a data and run and app container.
+ * @param  {Object} server_data
+ * @param  {String} server_data.base_url - the base of URL of jupyter intance
+ * @return {Promise<Object>} resolve object with reference and server_address
+ */
+DockerSpawner.prototype.spawn = function(server_data) {
+  var self = this;
+  return self
+    .createDataContainer()
+    .then(function(){
+      return self.runAppContainer(server_data);
+    })
+    .then(function() {
+      return {
+        reference: self.reference,
+        server_address: self.address
+      };
+    });
+};
+
+/**
+ * Restart an app container: reuse the same data container, but actually
+ * spanw a new app container.
+ * /!\ reference and address will change
+ * @param  {Object} server_data
+ * @param  {String} server_data.base_url - the base of URL of jupyter intance
+ * @return {Promise<Object>} resolve object with reference and server_address
+ */
+DockerSpawner.prototype.restart = function(server_data) {
+  var self = this;
+  return self
+    .stopAppContainer()
+    .then(function() {
+      return self.runAppContainer(server_data);
+    })
+    .then(function () {
+      return {
+        reference: self.reference,
+        server_address: self.address
+      };
+    })
+};
+
+/**
+ * Create and start (=run) the app container.
+ * @param  {Object} server_data
+ * @param  {String} server_data.base_url - the base of URL of jupyter intance
+ * @return {Promise}] resolved when running
+ */
+DockerSpawner.prototype.runAppContainer = function(server_data) {
+  var self = this;
+  var docker = self.docker;
+
+  var dataContainerRef = self.reference.data_container;
+  var base_url = server_data.base_url;
+
+  if(!dataContainerRef.id)
+    return Promise.reject(new Error("no dataContainerRef.id"));
+
+  var appContainerConfig = {
+    Image: IMAGE_NAME,
+    Cmd: ['start-notebook.sh',
+          '--NotebookApp.base_url='+base_url],
+    Labels: {
+      app: config.docker.app_label,
+      app_role: 'app_container'
+    },
+    HostConfig: {
+      VolumesFrom: [dataContainerRef.id]
+    }
+  };
+
+  if(config.docker.networking_strategy === 'publish') {
+    appContainerConfig.HostConfig.PublishAllPorts = true;
+  }
+
+  console.log(appContainerConfig);
+
+  return docker
+    .createContainerAsync(appContainerConfig)
+    .then(function(container) {
+      // promisifyAllfy the container
+      container = Promise.promisifyAll(container);
+
+      // store the reeference now
+      self.reference.app_container = {
+        id: container.id
+      };
+
+      // start the container
+      return container.startAsync();
+
+    }).then(function(){
+      return self.getAppContainerAccessibleAddress();
+    })
+    .then(function(address) {
+      self.address = address;
+      return poll(self.isUp.bind(self));
+    });
+};
+
+/**
+ * Stop the app container.
+ * @return {Promise} resolved when stoppped
+ */
+DockerSpawner.prototype.stopAppContainer = function() {
+  var container = this.getAppContainer();
+  var self = this;
+  // 304 on stop means the container is already stoped
+  var is304 = function(e) {
+    return e.statusCode  == 304;
+  };
+  return container
+    .stopAsync()
+    .catch(is304, function() {return null;})
+    .then(function() {
+      self.reference.app_container = null;
+      self.address = null;
+    });
+};
+
+/**
+ * Check if the app container is running by (HTTP) pinging the server URL.
+ * @return {Promise<Boolean>} resolve true if is running
+ */
 DockerSpawner.prototype.isUp = function() {
   var self = this;
 
+  if(!self.address)
+    throw new Error("No address");
+
   return rp({
       'method': 'GET',
-      'uri': self.getServerAddress(),
+      'uri': self.address,
        timeout: 200
   })
   .catch(rp_errors.StatusCodeError, function(){return null;})
@@ -34,73 +163,95 @@ DockerSpawner.prototype.isUp = function() {
     function(){return true;},
     function(){ return false;}
   ).then(function(up) {
-    logging.info('Docker container %j is up:'+up, self.getReference());
+    logging.info('Docker container %j is up:'+up, self.reference);
     return up;
   });
 };
 
-DockerSpawner.prototype.start = function(server_data) {
-  logging.profile('DockerSpawner#start');
+/**
+ * Get the accessible server address of the app continer.
+ * @return {Promose<String>} Resolve te address
+ */
+DockerSpawner.prototype.getAppContainerAccessibleAddress = function() {
+  var appContainer = this.getAppContainer();
+  return appContainer
+    .inspectAsync()
+    .then(function(inspect_data){
+      var NetworkSettings = inspect_data.NetworkSettings;
+      var net_strat = config.docker.networking_strategy;
+      var ip, port;
 
+      switch(net_strat){
+        case 'publish':
+          ip = config.docker.public_host_ip;
+          port = NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
+          break;
+        case 'private':
+          ip = NetworkSettings.IPAddress;
+          port = EXPOSED_PORT;
+          break;
+        default:
+          throw Error('Unknown docker network strategy "'+net_strat+'"');
+      }
+      return 'http://'+ip+':'+port;
+    });
+};
+
+/**
+ * Create a data container and store its reference in
+ * this.reference.data_container
+ * @return {Promise}
+ */
+DockerSpawner.prototype.createDataContainer = function() {
+  var docker = this.docker;
   var self = this;
-  var docker = self.docker;
 
-  var base_url = server_data.base_url;
-  var container_config = {
+
+  var dataContainerConfig = {
     Image: IMAGE_NAME,
-    Cmd: ['start-notebook.sh',
-          '--NotebookApp.base_url='+base_url],
+    Cmd: '/bin/true',
+    Volumes: {
+        '/home/jovyan/work': {}
+      },
     Labels: {
-      app: config.docker.app_label
+      app: config.docker.app_label,
+      app_role: 'data_container'
     }
   };
 
-  if(config.docker.networking_strategy === 'publish') {
-    container_config.HostConfig = {
-        PublishAllPorts: true
-    };
-  }
-
-  logging.info('Create a docker container for %j', server_data);
   return docker
-    .createContainerAsync(container_config)
+    .createContainerAsync(dataContainerConfig)
     .then(function(container) {
-      // promisifyAllfy the container
-      container = Promise.promisifyAll(container);
-
-      // store the reeference now
-      self.reference = {'container_id': container.id};
-
-      logging.info('Start the docker container %s', container.id);
-
-      // start the container
-      return container.startAsync();
-
-    }).then(function() {
-      // inspect the container after start to have info on port
-      return self.getContainer().inspectAsync();
-
-    }).then(function(inspect_data){
-      // let's extract the published_port from inspect data
-      var NetworkSettings = inspect_data.NetworkSettings;
-      if(config.docker.networking_strategy === 'publish') {
-        self._published_port = NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
-      } else {
-        self._published_port = null;
-      }
-      self._container_ip = NetworkSettings.IPAddress;
-
-      logging.info('Docker container %s inspected',  self.getReference());
-    })
-    .then(function() {
-      return poll(self.isUp.bind(self));
-    }).then(function() {
-      logging.info('Docker container %s up and ready to be used', self.getReference());
-      logging.profile('DockerSpawner#start');
-      return {
-        reference: self.getReference(),
-        server_address: self.getServerAddress()
+      self.reference.data_container = {
+        id: container.id
       };
+    });
+};
+
+/**
+ * Ensure that we have  data container in refereence and that it exists.
+ * Otherwise create a data container.
+ * @return {Promise} resolved only once there is a data container
+ */
+DockerSpawner.prototype.ensureDataContainer = function() {
+  var dataContainer = this.getDataContainer();
+  var self = this;
+  if(!dataContainer)
+    return this.createDataContainer();
+
+  var containerNotExist = function(e) {
+    return e.reason == 'no such container';
+  };
+
+  dataContainer
+    .inspectAsync()
+    .thenReturn(true)
+    .catch(containerNotExist, function() {return false;})
+    .then(function(exist) {
+      if(exist)
+        return Promise.resolve();
+      else
+        return self.createDataContainer();
     });
 };
 
@@ -112,42 +263,44 @@ DockerSpawner.prototype.stop = function() {
           });
 };
 
-
-DockerSpawner.prototype.getContainer = function() {
-  var docker = this.docker;
-  var containerId = this.reference.container_id;
-
-  var container = docker.getContainer(containerId);
-
-  return Promise.promisifyAll(container);
+/**
+ * Get the app container from the refence.
+ * If no reference return null.
+ * @return {dockerode.Container}
+ */
+DockerSpawner.prototype.getAppContainer = function() {
+  return this._getContainer('app_container');
 };
 
-DockerSpawner.prototype.getStatus = function() {
+/**
+ * Get the data container from the refence.
+ * If no reference return null.
+ * @return {dockerode.Container}
+ */
+DockerSpawner.prototype.getDataContainer = function() {
+  return this._getContainer('data_container');
+};
 
+/**
+ * Get the container given the reference key.
+ * If no reference return null.
+ * @private
+ * @param  {String} refKey
+ * @return {dockerode.Container}
+ */
+DockerSpawner.prototype._getContainer = function(refKey) {
+  var docker = this.docker;
+  var containerRef = this.reference[refKey];
+
+  if (!containerRef) return null;
+
+  var container = docker.getContainer(containerRef.id);
+  // promisify all method
+  return Promise.promisifyAll(container);
 };
 
 DockerSpawner.prototype.getReference = function() {
   return this.reference;
-};
-
-DockerSpawner.prototype.getServerAddress = function() {
-  var net_strat = config.docker.networking_strategy;
-  var ip, port;
-
-  switch(net_strat){
-    case 'publish':
-      ip = config.docker.public_host_ip;
-      port = this._published_port;
-      break;
-    case 'private':
-      ip = this._container_ip;
-      port = EXPOSED_PORT;
-      break;
-    default:
-      throw Error('Unknown docker network strategy "'+net_strat+'"');
-  }
-
-  return 'http://'+ip+':'+port;
 };
 
 module.exports = DockerSpawner;

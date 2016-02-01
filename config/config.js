@@ -62,8 +62,8 @@ cf.production.docker = {
 };
 
 // used to label containers
-cf.development.docker.app_label =
-cf.test.docker.app_label =
+cf.development.docker.app_label = 'jupyternow_dev';
+cf.test.docker.app_label = 'jupyternow_test';
 cf.production.docker.app_label = 'jupyternow';
 
 
