@@ -58,7 +58,7 @@ module.exports = function(app, config) {
   app.use(raven.middleware.express.errorHandler(sentryClient));
 
   if(app.get('env') === 'development'){
-    app.use(function (err, req, res, next) {
+    app.use(function (err, req, res) {
       logging.error(err);
       res.status(err.status || 500);
       res.render('error', {
@@ -69,7 +69,7 @@ module.exports = function(app, config) {
     });
   }
 
-  app.use(function (err, req, res, next) {
+  app.use(function (err, req, res) {
     logging.error(err);
     res.status(err.status || 500);
       res.render('error', {
@@ -90,10 +90,10 @@ module.exports = function(app, config) {
       var head = new Buffer(upgradeHead.length);
       upgradeHead.copy(head);
 
-      res = new http.ServerResponse(req);
+      var res = new http.ServerResponse(req);
       req.upgradeSocket = socket;
 
-      app(req, res)
+      app(req, res);
     });
 
     return server.listen.apply(server, arguments);
