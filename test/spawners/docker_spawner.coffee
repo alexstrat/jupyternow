@@ -26,7 +26,7 @@ describe 'spawners > docker spawner >', ->
                 config.docker.app_label = config.docker._app_label
 
 
-    describe.only '#spawn', ->
+    describe '#spawn', ->
 
         it 'should work', ->
             s = new DockerSpawner()
