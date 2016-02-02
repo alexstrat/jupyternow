@@ -11,6 +11,8 @@ var compress = require('compression');
 var methodOverride = require('method-override');
 var expstate = require('express-state');
 var browserify = require('browserify-middleware');
+var raven = require('raven');
+var sentryClient = require('./sentry').client;
 
 module.exports = function(app, config) {
   var env = process.env.NODE_ENV || 'development';
@@ -19,6 +21,9 @@ module.exports = function(app, config) {
 
   app.set('views', config.root + '/app/views');
   app.set('view engine', 'jade');
+
+  // The request handler must be the first item
+  app.use(raven.middleware.express.requestHandler(sentryClient));
 
   // app.use(favicon(config.root + '/public/img/favicon.ico'));
   app.use(logger('dev'));
@@ -48,6 +53,9 @@ module.exports = function(app, config) {
     err.status = 404;
     next(err);
   });
+
+  // The error handler must be before any other error middleware
+  app.use(raven.middleware.express.errorHandler(sentryClient));
 
   if(app.get('env') === 'development'){
     app.use(function (err, req, res, next) {

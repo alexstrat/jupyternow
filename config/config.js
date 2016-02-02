@@ -112,5 +112,11 @@ cf.production.SendWithUs = {ApiKey: process.env.SENDWITHUS_API_KEY};
 cf.development.SendWithUs = {ApiKey: process.env.SENDWITHUS_API_KEY};
 cf.test.SendWithUs = {ApiKey: process.env.SENDWITHUS_API_KEY};
 
+// **************
+// Sentry config
+cf.production.Sentry = {dsn: process.env.SENTRY_DSN};
+cf.development.Sentry = {dsn: false};
+cf.test.Sentry = {dsn: false};
+
 
 module.exports = cf[env];
