@@ -3,6 +3,9 @@ var config = require('./config');
 
 var client = new raven.Client(config.Sentry.dsn);
 
-client.patchGlobal();
+var env = process.env.NODE_ENV || 'development';
+if (env == 'production') {
+    client.patchGlobal();
+}
 
 exports.client = client;
