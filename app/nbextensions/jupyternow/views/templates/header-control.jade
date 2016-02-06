@@ -1,0 +1,17 @@
+li.dropdown
+    a.dropdown-toggle(data-toggle="dropdown")
+        = thisServer.name
+        i.fa.fa-chevron-down
+    ul.dropdown-menu
+        each server in servers
+            li(class={active: server.active})
+                a(href=server.url)= server.name
+
+li.dropdown
+    a.dropdown-toggle(data-toggle="dropdown")
+        img.avatar(src=photo)
+        i.fa.fa-chevron-down
+    ul.dropdown-menu
+        li.dropdown-header= displayName
+        li
+            a(href="/logout") Logout

@@ -8,10 +8,40 @@
 .jupyternow-header {
     background-color: #435160;
     padding: 0 1px;
+    line-height: 27px;
+    font-family: PTSans-Regular;
+    -webkit-font-smoothing: antialiased;
 }
 
 .jupyternow-header .title {
-    font-family: PTSans-Regular;
     font-size: 25px;
     color: #FFFFFF;
+}
+
+.jupyternow-header .nav > li > a {
+    font-size: 14px;
+    color: #FFFFFF;
+}
+
+.jupyternow-header .nav > li > a > .fa-chevron-down{
+    font-size: 9px;
+    margin-left: 6px;
+    color: #DADADA;
+    vertical-align: 1px;
+}
+
+.jupyternow-header .nav > li > a:hover, .jupyternow-header .nav > li > a:focus {
+    color: auto;
+    background-color: #343F4A;
+}
+
+.jupyternow-header .nav .open > a, .jupyternow-header .nav .open > a:hover, .jupyternow-header .nav  .open > a:focus {
+    color: auto;
+    background-color: #343F4A;
+}
+
+.jupyternow-header img.avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
 }
