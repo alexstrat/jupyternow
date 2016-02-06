@@ -19,6 +19,11 @@ router.get('/login', function (req, res, next) {
     });
 });
 
+router.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
 router.get('/', function (req, res, next) {
     var user = req.user;
 
