@@ -6,7 +6,10 @@ var gulp = require('gulp'),
   start = require('gulp-start-process'),
   gutil = require('gulp-util'),
   notifierReporter = require('mocha-notifier-reporter'),
-  mocha = require('gulp-mocha');
+  mocha = require('gulp-mocha'),
+  jade = require('gulp-jade'),
+  wrap = require('gulp-wrap-amd'),
+  rename = require("gulp-rename");
 
 gulp.task('less', function () {
   gulp.src('./public/css/*.less')
@@ -16,8 +19,20 @@ gulp.task('less', function () {
     .pipe(livereload());
 });
 
+gulp.task('jade', function() {
+  gulp.src('./app/nbextensions/jupyternow/**/*.jade')
+    .pipe(jade({client: true}))
+    .pipe(wrap({
+          deps: ['jade'],
+          params: ['jade']
+        }))
+    .pipe(rename({extname: '.jade.js'}))
+    .pipe(gulp.dest('./app/nbextensions/jupyternow/'));
+});
+
 gulp.task('watch', function() {
   gulp.watch('./public/css/*.less', ['less']);
+  gulp.watch('./app/nbextensions/jupyternow/**/*.jade', ['jade']);
 });
 
 gulp.task('develop', function () {
