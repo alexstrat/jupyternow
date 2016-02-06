@@ -18,10 +18,10 @@ router
                 return res.sendStatus(401);
             next();
         })
-        .get(function(req, res) {
+        .get(function(req, res, next) {
             var data = {
                 displayName: req.user.displayName,
-                photo: req.user.photos[0].value
+                photo: req.user.picture
             };
             Server
                 .findByUserId(req.user.id)
@@ -33,5 +33,6 @@ router
                         };
                     });
                     res.json(data);
-                });
+                })
+                .catch(next);
         });

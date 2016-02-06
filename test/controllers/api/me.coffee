@@ -48,10 +48,8 @@ describe 'controllers > api > me >', ->
             passportStub.login(
                 id: 'id-foo-bar',
                 displayName: 'Alex'
-                photos: [
-                    value: 'http://image-url.com'
-                ])
-
+                picture: 'http://image-url.com'
+            )
             request(app)
                 .get('/api/me')
                 .set('Accept', 'application/json')
