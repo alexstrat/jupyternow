@@ -4,6 +4,7 @@ var Docker = require('dockerode'),
     rp = require('request-promise'),
     rp_errors = require('request-promise/lib/errors'),
     logging = require('winston'),
+    archiver = require('archiver'),
     poll = require('../lib/poll');
 
 var IMAGE_NAME = 'alexstrat/jupyternow-notebook';
@@ -261,6 +262,20 @@ DockerSpawner.prototype.stop = function() {
           .then(function (){
             return container.removeAsync();
           });
+};
+
+/**
+ * Put a file in working directory.
+ * @param  {String} fileNam - name of file
+ * @param  {String} data - file content
+ * @return {Promise} resolved when done
+ */
+DockerSpawner.prototype.putFileInWorkingDir = function(fileName, data) {
+  var archive = archiver.create('tar');
+  archive.append(data, {name: fileName}).finalize();
+
+  var container = this.getDataContainer();
+  return container.putArchiveAsync(archive, {path: '/home/jovyan/work'});
 };
 
 /**

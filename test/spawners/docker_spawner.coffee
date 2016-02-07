@@ -49,3 +49,15 @@ describe 'spawners > docker spawner >', ->
             expect(rs).to.eventually.to.have.property('reference')
             expect(rs).to.eventually.to.have.property('server_address')
 
+    describe.only '#putFileInWorkingDir', ->
+        s = null
+        beforeEach ->
+            s = new DockerSpawner()
+            s.spawn base_url: 'foo'
+                .then ->
+                    s.putFileInWorkingDir 'salut.txt', 'hello\n'
+
+        it 'should have put the file', ->
+            c = s.getAppContainer()
+            testFile = dockerUtil.runCommandInContainer c, ['test','-f', '/home/jovyan/work/salut.txt']
+            expect(testFile).to.eventually.have.deep.property 'inspectData.ExitCode', 0
