@@ -49,7 +49,7 @@ describe 'spawners > docker spawner >', ->
             expect(rs).to.eventually.to.have.property('reference')
             expect(rs).to.eventually.to.have.property('server_address')
 
-    describe.only '#putFileInWorkingDir', ->
+    describe '#putFileInWorkingDir', ->
         s = null
         beforeEach ->
             s = new DockerSpawner()
