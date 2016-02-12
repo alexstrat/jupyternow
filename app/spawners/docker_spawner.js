@@ -7,10 +7,6 @@ var Docker = require('dockerode'),
     archiver = require('archiver'),
     poll = require('../lib/poll');
 
-var IMAGE_NAME = 'alexstrat/jupyternow-notebook';
-var EXPOSED_PORT = '8888';
-
-
 function DockerSpawner(reference) {
 
   //instantiate a docker client
@@ -21,6 +17,10 @@ function DockerSpawner(reference) {
 
   this.reference = reference || {};
 }
+
+// some constants
+DockerSpawner.prototype.IMAGE_NAME = 'alexstrat/jupyternow-notebook';
+DockerSpawner.prototype.EXPOSED_PORT = '8888';
 
 /**
  * Create a data and run and app container.
@@ -83,7 +83,7 @@ DockerSpawner.prototype.runAppContainer = function(server_data) {
     return Promise.reject(new Error("no dataContainerRef.id"));
 
   var appContainerConfig = {
-    Image: IMAGE_NAME,
+    Image: this.IMAGE_NAME,
     Cmd: ['start-notebook.sh',
           '--NotebookApp.base_url='+base_url],
     Labels: {
@@ -172,6 +172,8 @@ DockerSpawner.prototype.isUp = function() {
  * @return {Promose<String>} Resolve te address
  */
 DockerSpawner.prototype.getAppContainerAccessibleAddress = function() {
+  var self = this;
+
   var appContainer = this.getAppContainer();
   return appContainer
     .inspectAsync()
@@ -183,11 +185,11 @@ DockerSpawner.prototype.getAppContainerAccessibleAddress = function() {
       switch(net_strat){
         case 'publish':
           ip = config.docker.public_host_ip;
-          port = NetworkSettings.Ports[EXPOSED_PORT+'/tcp'][0].HostPort;
+          port = NetworkSettings.Ports[self.EXPOSED_PORT+'/tcp'][0].HostPort;
           break;
         case 'private':
           ip = NetworkSettings.IPAddress;
-          port = EXPOSED_PORT;
+          port = self.EXPOSED_PORT;
           break;
         default:
           throw Error('Unknown docker network strategy "'+net_strat+'"');
@@ -207,7 +209,7 @@ DockerSpawner.prototype.createDataContainer = function() {
 
 
   var dataContainerConfig = {
-    Image: IMAGE_NAME,
+    Image: this.IMAGE_NAME,
     Cmd: '/bin/true',
     Volumes: {
         '/home/jovyan/work': {}
