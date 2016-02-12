@@ -22,6 +22,7 @@ function DockerSpawner(reference) {
 DockerSpawner.prototype.IMAGE_NAME = 'alexstrat/jupyternow-notebook';
 DockerSpawner.prototype.EXPOSED_PORT = '8888';
 DockerSpawner.prototype.UP_TIMEOUT = 20000;
+DockerSpawner.prototype.VOLUME_PATH = '/home/jovyan/work';
 
 /**
  * Create a data and run and app container.
@@ -212,14 +213,13 @@ DockerSpawner.prototype.createDataContainer = function() {
   var dataContainerConfig = {
     Image: this.IMAGE_NAME,
     Cmd: '/bin/true',
-    Volumes: {
-        '/home/jovyan/work': {}
-      },
+    Volumes: {},
     Labels: {
       app: config.docker.app_label,
       app_role: 'data_container'
     }
   };
+  dataContainerConfig.Volumes[this.VOLUME_PATH] = {};
 
   return docker
     .createContainerAsync(dataContainerConfig)
@@ -276,7 +276,7 @@ DockerSpawner.prototype.putFileInWorkingDir = function(fileName, data) {
   archive.append(data, {name: fileName}).finalize();
 
   var container = this.getDataContainer();
-  return container.putArchiveAsync(archive, {path: '/home/jovyan/work'});
+  return container.putArchiveAsync(archive, {path: this.VOLUME_PATH});
 };
 
 /**
