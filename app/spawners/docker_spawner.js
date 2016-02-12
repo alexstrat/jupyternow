@@ -21,6 +21,7 @@ function DockerSpawner(reference) {
 // some constants
 DockerSpawner.prototype.IMAGE_NAME = 'alexstrat/jupyternow-notebook';
 DockerSpawner.prototype.EXPOSED_PORT = '8888';
+DockerSpawner.prototype.UP_TIMEOUT = 20000;
 
 /**
  * Create a data and run and app container.
@@ -118,7 +119,7 @@ DockerSpawner.prototype.runAppContainer = function(server_data) {
     })
     .then(function(address) {
       self.address = address;
-      return poll(self.isUp.bind(self));
+      return poll(self.isUp.bind(self), self.UP_TIMEOUT);
     });
 };
 
