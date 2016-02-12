@@ -99,8 +99,6 @@ DockerSpawner.prototype.runAppContainer = function(server_data) {
     appContainerConfig.HostConfig.PublishAllPorts = true;
   }
 
-  console.log(appContainerConfig);
-
   return docker
     .createContainerAsync(appContainerConfig)
     .then(function(container) {
