@@ -1,5 +1,5 @@
 var config = require('../config/config');
-require('../config/mongoose')(config);
+var mongoConnection = require('../config/mongoose')(config);
 
 var Server = require('../app/models/server');
 
@@ -15,4 +15,7 @@ Server.find().exec()
     }, {concurrency: 1})
     .then(function() {
        console.log("Ok, done.");
+    })
+    .finally(function(){
+        mongoConnection.disconnect();
     });
