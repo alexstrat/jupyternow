@@ -4,6 +4,9 @@ FROM node:argon
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
+# command line utils
+RUN npm install -g gulp nesh
+
 # Install app dependencies
 COPY package.json /usr/src/app/
 RUN npm install

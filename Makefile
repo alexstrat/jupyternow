@@ -1,6 +1,6 @@
 docker_build:
 	docker build -t alexstrat/jupyternow .
-	@gulp jade
+	gulp jade
 	docker build -t alexstrat/jupyternow-notebook -f docker-stacks/jupyternow-notebook/Dockerfile .
 
 docker_push: docker_build
