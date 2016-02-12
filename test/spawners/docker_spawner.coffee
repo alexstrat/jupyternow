@@ -4,7 +4,7 @@ chai.use require 'chai-as-promised'
 Promise = require 'bluebird'
 config = require '../../config/config'
 Docker = require 'dockerode'
-dockerUtil = require './docker_util'
+dockerUtil = require '../../app/lib/docker_utils'
 DockerSpawner = require '../../app/spawners/docker_spawner'
 
 describe 'spawners > docker spawner >', ->
@@ -21,7 +21,7 @@ describe 'spawners > docker spawner >', ->
 
     afterEach ->
         dockerUtil
-            .killAllWithlabel @docker, config.docker.app_label
+            .killAllContainersWithLabel @docker, config.docker.app_label
             .finally ->
                 config.docker.app_label = config.docker._app_label
 
@@ -60,4 +60,4 @@ describe 'spawners > docker spawner >', ->
         it 'should have put the file', ->
             c = s.getAppContainer()
             testFile = dockerUtil.runCommandInContainer c, ['test','-f', '/home/jovyan/work/salut.txt']
-            expect(testFile).to.eventually.have.deep.property 'inspectData.ExitCode', 0
+            expect(testFile).to.eventually.have.deep.property '[1].ExitCode', 0
