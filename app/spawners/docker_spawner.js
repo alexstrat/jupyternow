@@ -22,7 +22,7 @@ function DockerSpawner(reference) {
 DockerSpawner.prototype.IMAGE_NAME = 'alexstrat/jupyternow-notebook';
 DockerSpawner.prototype.EXPOSED_PORT = '8888';
 DockerSpawner.prototype.UP_TIMEOUT = 20000;
-DockerSpawner.prototype.VOLUME_PATH = '/home/jovyan/work';
+DockerSpawner.prototype.VOLUME_PATH = '/home/jovyan/';
 
 /**
  * Create a data and run and app container.
